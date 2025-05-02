@@ -23,13 +23,19 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import RegisterScreen from './src/Screens/Register.screen';
 
 
 
 function App() {
   
 
-  return ()
+  return (
+    <>
+    <RegisterScreen/>
+    
+    </>
+  )
 };
 
 export default App;
