@@ -3,6 +3,8 @@ import { BackHandler, ImageBackground, SafeAreaView, StyleSheet, Text, View } fr
 import CheckBox from '@react-native-community/checkbox';
 import { Image } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
+import { useHabitStore, useHabitTextStore } from "../Store/store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function HomeScreen({ navigation }: any) {
 
@@ -18,6 +20,22 @@ function HomeScreen({ navigation }: any) {
     return () =>backHandler.remove();
   },[]);
 
+  const{habitText,setHabitText}=useHabitTextStore(state=>state);
+  const{habits,addHabit,deleteHabit,handleDone,setHabits}=useHabitStore(state=>state);
+
+  useEffect(()=>{
+    const getHabits=async()=>{
+      try{
+        const habits=await AsyncStorage.getItem("my-habit");
+        if(habits){
+          setHabits(JSON.parse(habits));
+        }
+      }catch (error) {
+        console.log(error);
+      }
+    };
+    getHabits();
+  },[]);
 
 
   // Get the current date
