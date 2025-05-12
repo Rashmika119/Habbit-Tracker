@@ -23,8 +23,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import RegisterScreen from './src/Screens/Register.screen';
-import HomeScreen from './src/Screens/HomeScreen.screen';
+import AddScreen from './src/Screens/AddScreen.screen';
 
 
 
@@ -33,7 +32,7 @@ function App() {
 
   return (
     <>
-    <HomeScreen/>
+    <AddScreen/>
     
     </>
   )
