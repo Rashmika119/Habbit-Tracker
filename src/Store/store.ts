@@ -46,8 +46,8 @@ export const useHabitStore=create<habitStoreType>((set)=>({
             if(!habitText || !habitText.task || habitText.task.trim()=== ""){
                 return;
             }
-            const newTodo={
-                id:Math.random();
+            const newHabit={
+                id:Math.random(),
                 task:habitText.task,
                 description:habitText.description,
                 completed:false,
@@ -66,7 +66,7 @@ export const useHabitStore=create<habitStoreType>((set)=>({
             console.log(error);
         }
     },
-    deleteHabit:async(id: number | undefined){
+    deleteHabit:async(id: number | undefined)=>{
         try{
             const {habits} =useHabitStore.getState();
             const newHabits=habits.filter((habit) => habit.id !== id);

@@ -155,23 +155,6 @@ function HomeScreen({ navigation }: any) {
         </View>
 
       </View>
-
-
-      <View style={styles.footer}>
-        <View style={styles.footerContent}>
-          <View style={styles.iconContainer}>
-            <Image source={require("../Assests/home.png")} style={styles.icon} />
-            <Text style={styles.iconLabel}>Home</Text>
-          </View>
-          <View style={styles.addIconContainer}>
-            <Image source={require("../Assests/add.png")} style={styles.addIcon} />
-          </View>
-          <View style={styles.iconContainer}>
-            <Image source={require("../Assests/task.png")} style={styles.icon} />
-            <Text style={styles.iconLabel}>Tasks</Text>
-          </View>
-        </View>
-      </View>
     </SafeAreaView>
   );
 }

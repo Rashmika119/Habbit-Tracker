@@ -31,7 +31,7 @@ export default function AddScreen() {
                 style={styles.header}
                 resizeMode="cover"
             >
-                <Text style={styles.headerText}>📝 Add Your Task Here</Text>
+                <Text style={styles.headerText}>Add Your Task Here</Text>
             </ImageBackground>
             <ScrollView style={styles.detailsContainer}>
                 <View style={styles.section}>
