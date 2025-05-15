@@ -2,15 +2,16 @@ export type HabitType={
     id:number;
     task:string;
     description:string;
+    frequency:string;
     completed:boolean;
     behavior:string;
-    weekDay:string;
+    weekDay:string[];
     timeRange:string;
 }
 
 export type habitTextType={
     habitText:HabitType;
-    setHabitText:(text:string,key:string)=>void;
+    setHabitText:(value:string | boolean | string[],key:keyof HabitType)=>void;
     clearHabitText: ()=> void;
 }
 

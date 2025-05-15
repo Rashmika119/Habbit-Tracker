@@ -44,6 +44,14 @@ function HomeScreen({ navigation }: any) {
   const weekDay = today.toLocaleDateString('en-US', { weekday: 'long' });
   //Get the Day with Suffix
   const day = today.getDate();
+/*************  ✨ Windsurf Command ⭐  *************/
+  /**
+   * Returns the appropriate suffix for a given day of the month.
+   * 
+   * @param day - The day of the month as a number.
+   * @returns A string representing the suffix ('st', 'nd', 'rd', 'th') for the given day.
+
+/*******  46171277-9661-4d31-ac58-ee174b7c1b4e  *******/
   const getDaySuffix = (day: number) => {
     if (day > 3 && day < 21)
       return 'th';
@@ -73,13 +81,13 @@ function HomeScreen({ navigation }: any) {
   const getTimeIcon = (time: string) => {
     switch (time) {
       case 'Morning':
-        return require("../Assests/morning.png");
+        return require("../Assets/morning.png");
       case 'Afternoon':
-        return require("../Assests/afternoon.png");
+        return require("../Assets/afternoon.png");
       case 'Evening':
-        return require("../Assests/evening.png");
+        return require("../Assets/evening.png");
       case 'Night':
-        return require("../Assests/night.png");
+        return require("../Assets/night.png");
       default:
         return null;
     }
@@ -103,7 +111,7 @@ function HomeScreen({ navigation }: any) {
     <SafeAreaView style={styles.container}>
       <View style={styles.headerSection}>
         <ImageBackground
-          source={require('../Assests/background.jpg')}
+          source={require('../Assets/background.jpg')}
           style={styles.background}
           resizeMode="cover"
         >
@@ -147,7 +155,7 @@ function HomeScreen({ navigation }: any) {
                   tintColors={{ true: '#5271FF', false: '#CCCCCC' }}
                 />
                 <Text style={styles.taskText}>{task.task}</Text>
-                <Image source={require("../Assests/delete.png")} style={styles.deleteIcon}></Image>
+                <Image source={require("../Assets/delete.png")} style={styles.deleteIcon}></Image>
               </View>
             ))}
           </View>
@@ -273,34 +281,16 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#333333',
   },
-  footer: {
-    backgroundColor: '#FFFFFF',
-    paddingTop: 16,
-    paddingBottom: 24,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -3 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
+
   deleteIcon: {
     width: 24,
     height: 24,
     tintColor: '#5271FF',
     marginLeft: 'auto',
-    tintColor: "rgba(249, 15, 15, 0.95)"
+    tintColor: "tomato"
   },
-  footerContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  iconContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+
+
   icon: {
     width: 30,
     height: 30,

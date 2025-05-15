@@ -1,6 +1,6 @@
 import {create} from 'zustand';
 import { habitStoreType, habitTextType, HabitType } from '../Types/types';
-import { Keyboard } from 'react-native';
+import { Alert, Keyboard } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -9,17 +9,18 @@ export const useHabitTextStore=create<habitTextType>((set)=>({
     id:0,
     task:"",
     description:"",
+    frequency:"",
     completed:false,
     behavior:"",
-    weekDay:"",
+    weekDay:[],
     timeRange:"",
    },
 
-   setHabitText:(text:string,key:string)=>{
+   setHabitText:(value:string | boolean | string[],key:keyof HabitType)=>{
     set((state)=>({
         habitText:{
             ...state.habitText,
-            [key]:text,
+            [key]:value,
         }
     }))
    },
@@ -29,9 +30,10 @@ export const useHabitTextStore=create<habitTextType>((set)=>({
             id:0,
             task:"",
             description:"",
+            frequency:"",
             completed:false,
             behavior:"",
-            weekDay:"",
+            weekDay:[],
             timeRange:"",
         }
     }))
@@ -43,13 +45,15 @@ export const useHabitStore=create<habitStoreType>((set)=>({
     addHabit:async()=>{
         const {habitText,setHabitText,clearHabitText}=useHabitTextStore.getState();
         try{
-            if(!habitText || !habitText.task || habitText.task.trim()=== ""){
+            if(!habitText.task.trim() || !habitText.description.trim() || !habitText.timeRange.trim() || !habitText.behavior.trim() || !habitText.weekDay.length){
+                Alert.alert("Please fill all the fields");
                 return;
             }
             const newHabit={
                 id:Math.random(),
                 task:habitText.task,
                 description:habitText.description,
+                frequency:habitText.frequency,
                 completed:false,
                 behavior:habitText.behavior,
                 weekDay:habitText.weekDay,
@@ -60,6 +64,7 @@ export const useHabitStore=create<habitStoreType>((set)=>({
 
             }))
             await AsyncStorage.setItem("my-habit",JSON.stringify(useHabitStore.getState().habits));
+            Alert.alert("Habit Added Successfully");
             clearHabitText();
             Keyboard.dismiss();
         }catch (error){

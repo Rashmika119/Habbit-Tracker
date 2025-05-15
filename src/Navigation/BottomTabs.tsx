@@ -8,6 +8,8 @@ import { Image, StyleSheet } from "react-native";
 
 // Import your home icon image (adjust the path as needed)
 import HomeIcon from '../Assets/home.png';
+import AddIcon from '../Assets/add.png';
+import TaskIcon from '../Assets/task.png';
 
 
 const Tab = createBottomTabNavigator();
@@ -28,17 +30,47 @@ export default function BottomTabs() {
                     />
                 ),
             }} />
-            <Tab.Screen name="Add" component={AddScreen} />
-            <Tab.Screen name="Tasks" component={TaskScreen} />
+            <Tab.Screen name="Add" component={AddScreen} options={{
+                tabBarIcon: ({ focused }) => (
+                    <Image
+                        source={AddIcon}
+                        style={{
+                            width: 30,
+                            height: 30,
+                            tintColor: focused ? 'tomato' : 'gray',
+                        }}
+                    />
+                )
+            }} />
+            <Tab.Screen name="Tasks" component={TaskScreen} options={{
+                tabBarIcon:({focused})=>(
+                    <Image
+                    source={TaskIcon}
+                    style={{
+                        width: 30,
+                        height: 30,
+                        tintColor: focused ? 'tomato' : 'gray',
+                    }}
+                    />
+                )
+            }}/>
 
         </Tab.Navigator>
     );
 }
 const styles = StyleSheet.create({
     tabBar: {
+        backgroundColor: '#FFFFFF',
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-    }
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
+        elevation: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: -3 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
 
 });

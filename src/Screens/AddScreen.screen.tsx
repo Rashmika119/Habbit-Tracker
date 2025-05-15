@@ -3,14 +3,16 @@ import { Picker } from "@react-native-picker/picker";
 import { Button, ImageBackground, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { useState } from "react";
 import { RadioButton } from "react-native-paper";
+import { useHabitStore, useHabitTextStore } from "../Store/store";
 
 const allDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const timeOptions = ["Morning", "Afternoon", "Evening", "Night"]
 export default function AddScreen() {
-    const [time, setTime] = useState('');
-    const [frequency, setFrequency] = useState('');
+
+    const { habits, addHabit, setHabits } = useHabitStore(state => state);
+
+    const { habitText, setHabitText } = useHabitTextStore(state => state)
     const [days, setDays] = useState<string[]>([]);
-    const [behaviour, setBehaviour] = useState('');
 
 
     const toggleDay = (day: string) => {
@@ -27,7 +29,7 @@ export default function AddScreen() {
     return (
         <View style={styles.container}>
             <ImageBackground
-                source={require('../Assests/headerbackground.png')}
+                source={require('../Assets/headerbackground.png')}
                 style={styles.header}
                 resizeMode="cover"
             >
@@ -35,17 +37,38 @@ export default function AddScreen() {
             </ImageBackground>
             <ScrollView style={styles.detailsContainer}>
                 <View style={styles.section}>
-                    <Text style={styles.label}>enter the title of your task</Text>
-                    <TextInput style={styles.inputTitle}></TextInput>
-                    <Text style={styles.label}>enter the description of your task</Text>
-                    <TextInput style={styles.inputDescription}></TextInput>
+                    <Text style={styles.label}>Enter the title of your task</Text>
+                    <TextInput
+                        style={styles.inputTitle}
+                        placeholder="Habit Title"
+                        value={habitText.task}
+                        onChangeText={(text)=>setHabitText(text,"task")}
+                        multiline={true}
+                        textAlignVertical='top'
+                        autoCorrect={false}
+                    >
+                    </TextInput>
+                    <Text style={styles.label}>Enter the description of your task</Text>
+                    <TextInput 
+                    style={styles.inputDescription}
+                    placeholder="Habit Description"
+                    value={habitText.description}
+                    onChangeText={(text)=>setHabitText(text,"description")}
+                    multiline={true}
+                    textAlignVertical="top"
+                    autoCorrect={false}
+                    >
+                    </TextInput>
 
                 </View>
                 <View style={styles.section}>
-                    <Text style={styles.label}>Select the frequency of your task</Text>
+                    <Text style={styles.label}
+                    >
+                        Select the frequency of your task
+                    </Text>
                     <Picker
-                        selectedValue={frequency}
-                        onValueChange={(itemValue) => setFrequency(itemValue)}
+                        selectedValue={habitText.frequency}
+                        onValueChange={(itemValue) => setHabitText(itemValue,"frequency")}
                         style={styles.picker}
                     >
                         <Picker.Item label="Daily" value="Daily" />
@@ -59,8 +82,8 @@ export default function AddScreen() {
                         {allDays.map((day) => (
                             <View key={day} style={styles.checkBoxItem}>
                                 <CheckBox
-                                    disabled={frequency === "daily"}
-                                    value={days.includes(day)}
+                                    disabled={habitText.frequency === "Daily"}
+                                    value={habitText.weekDay.includes(day)}
                                     onValueChange={() => toggleDay(day)}
                                 />
                                 <Text style={styles.dayText}>{day}</Text>
@@ -71,7 +94,7 @@ export default function AddScreen() {
                 </View>
                 <View style={styles.section}>
                     <Text style={styles.label}>Select Time of Day</Text>
-                    <RadioButton.Group onValueChange={setTime} value={time}>
+                    <RadioButton.Group onValueChange={(itemValue)=>setHabitText(itemValue,"timeRange")} value={habitText.timeRange}>
                         <View style={styles.timeWrapper}>
                             {timeOptions.map((timeRange) => (
                                 <View key={timeRange} style={styles.timeOption}>
@@ -85,7 +108,7 @@ export default function AddScreen() {
                 </View>
                 <View style={styles.section}>
                     <Text style={styles.label}>Is that habit good/bad</Text>
-                    <RadioButton.Group onValueChange={setBehaviour} value={behaviour}>
+                    <RadioButton.Group onValueChange={(itemValue)=>{setHabitText(itemValue,"behavior")}} value={habitText.behavior}>
                         <View style={styles.behaviorRow}>
                             <View style={[styles.behaviorOption, styles.good]}>
                                 <RadioButton value="Good" />
@@ -100,7 +123,7 @@ export default function AddScreen() {
 
                 </View>
                 <View style={styles.buttonContainer}>
-                    <Button title="Add Habit" onPress={() => { /* Add your handler here */ }} />
+                    <Button title="Add Habit" onPress={ addHabit } />
                 </View>
 
 
@@ -116,7 +139,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'rgba(165, 192, 237, 0.1)',
-        
+
 
     },
     header: {
@@ -136,7 +159,7 @@ const styles = StyleSheet.create({
     detailsContainer: {
         padding: 20,
         backgroundColor: '#f9fafb',
-        
+
     },
     section: {
         marginBottom: 20,
@@ -244,7 +267,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         marginTop: 30,
         marginBottom: 50,
-      
+
         backgroundColor: '#6366f1',
         borderRadius: 12,
         shadowColor: '#6366f1',
@@ -256,7 +279,7 @@ const styles = StyleSheet.create({
     behaviorText: {
         fontSize: 16,
         fontWeight: '500',
-        
+
     },
 });
 
