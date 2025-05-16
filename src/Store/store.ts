@@ -1,5 +1,5 @@
 import {create} from 'zustand';
-import { habitStoreType, habitTextType, HabitType } from '../Types/types';
+import { editStoreType, habitStoreType, habitTextType, HabitType } from '../Types/types';
 import { Alert, Keyboard } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -45,7 +45,9 @@ export const useHabitStore=create<habitStoreType>((set)=>({
     addHabit:async()=>{
         const {habitText,setHabitText,clearHabitText}=useHabitTextStore.getState();
         try{
-            if(!habitText.task.trim() || !habitText.description.trim() || !habitText.timeRange.trim() || !habitText.behavior.trim() || !habitText.weekDay.length){
+            const isDaily=habitText.frequency==="Daily";
+            const isWeekDayValid=isDaily ||habitText.weekDay.length>0;
+            if(!habitText.task.trim() || !habitText.description.trim() || !habitText.timeRange.trim() || !habitText.behavior.trim() || !isWeekDayValid){
                 Alert.alert("Please fill all the fields");
                 return;
             }
@@ -125,4 +127,20 @@ export const useHabitStore=create<habitStoreType>((set)=>({
     },
 
 }))
+
+
+export const useEditStore = create<editStoreType>((set) => ({
+    editId: null,
+    setEditId: (id: number) => {
+        set(() => ({
+            editId: id
+        }))
+    },
+    clearEditId: () => {
+        set(() => ({
+            editId: null
+        }))
+    }
+}))
+
   

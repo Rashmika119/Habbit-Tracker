@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { BackHandler, ImageBackground, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { BackHandler, FlatList, ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import CheckBox from '@react-native-community/checkbox';
 import { Image } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
-import { useHabitStore, useHabitTextStore } from "../Store/store";
+import { useEditStore, useHabitStore, useHabitTextStore } from "../Store/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import HabitItem from "../Components/HabitItem";
 
 function HomeScreen({ navigation }: any) {
 
@@ -17,25 +18,25 @@ function HomeScreen({ navigation }: any) {
       'hardwareBackPress',
       onBackPress
     );
-    return () =>backHandler.remove();
-  },[]);
+    return () => backHandler.remove();
+  }, []);
 
-  const{habitText,setHabitText}=useHabitTextStore(state=>state);
-  const{habits,addHabit,deleteHabit,handleDone,setHabits}=useHabitStore(state=>state);
+  const { habitText, setHabitText } = useHabitTextStore(state => state);
+  const { habits, addHabit, deleteHabit, handleDone, setHabits } = useHabitStore(state => state);
 
-  useEffect(()=>{
-    const getHabits=async()=>{
-      try{
-        const habits=await AsyncStorage.getItem("my-habit");
-        if(habits){
+  useEffect(() => {
+    const getHabits = async () => {
+      try {
+        const habits = await AsyncStorage.getItem("my-habit");
+        if (habits) {
           setHabits(JSON.parse(habits));
         }
-      }catch (error) {
+      } catch (error) {
         console.log(error);
       }
     };
     getHabits();
-  },[]);
+  }, []);
 
 
   // Get the current date
@@ -44,14 +45,7 @@ function HomeScreen({ navigation }: any) {
   const weekDay = today.toLocaleDateString('en-US', { weekday: 'long' });
   //Get the Day with Suffix
   const day = today.getDate();
-/*************  ✨ Windsurf Command ⭐  *************/
-  /**
-   * Returns the appropriate suffix for a given day of the month.
-   * 
-   * @param day - The day of the month as a number.
-   * @returns A string representing the suffix ('st', 'nd', 'rd', 'th') for the given day.
 
-/*******  46171277-9661-4d31-ac58-ee174b7c1b4e  *******/
   const getDaySuffix = (day: number) => {
     if (day > 3 && day < 21)
       return 'th';
@@ -95,17 +89,27 @@ function HomeScreen({ navigation }: any) {
   };
 
 
-  const [checked, setChecked] = useState([false, false, false]);
+  //const [checked, setChecked] = useState([false, false, false]);
+  const todayHabits=habits.filter(habit=>habit.frequency==="Daily" || habit.frequency=='Weekly' && habit.weekDay.includes(weekDay));
+  const completedTasks = todayHabits.filter(habit=>habit.completed).length;
+  const totalTodayTasks = tasks.length;
+  const progress = totalTodayTasks === 0 ? 0 : (completedTasks / totalTodayTasks) * 100;
 
-  const completedTasks = checked.filter(Boolean).length;
-  const totalTasks = tasks.length;
-  const progress = (completedTasks / totalTasks) * 100;
+  const { setEditId } = useEditStore();
 
-  const toggleCheckBox = (index: number) => {
-    const newChecked = [...checked];
-    newChecked[index] = !newChecked[index];
-    setChecked(newChecked);
-  };
+  //sort habits
+  const timeOrder={
+    Morning:1,
+    Afternoon:2,
+    Evening:3,
+    Night:4,
+  }
+  const sortedHabits=[...todayHabits].sort((a,b)=>{
+    if(a.completed !== b.completed){
+      return a.completed ? -1 : 1;
+    }
+    return timeOrder[a.timeRange as keyof typeof timeOrder] - timeOrder[b.timeRange as keyof typeof timeOrder];
+  })
 
   return (
     <SafeAreaView style={styles.container}>
@@ -143,24 +147,28 @@ function HomeScreen({ navigation }: any) {
             </View>
           </View>
         </View>
-
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}> Today Tasks</Text>
-          <View style={styles.tasksList}>
-            {tasks.map((task, index) => (
-              <View key={index} style={styles.task}>
-                <CheckBox
-                  value={checked[index]}
-                  onValueChange={() => toggleCheckBox(index)}
-                  tintColors={{ true: '#5271FF', false: '#CCCCCC' }}
-                />
-                <Text style={styles.taskText}>{task.task}</Text>
-                <Image source={require("../Assets/delete.png")} style={styles.deleteIcon}></Image>
-              </View>
-            ))}
-          </View>
-
+        <View style={styles.habitSection}>
+          <Text style={styles.sectionTitle}>Today habita</Text>
+          <ScrollView >
+            <FlatList
+              data={sortedHabits}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) =>
+                item.frequency === 'Daily' || item.frequency === 'Weekly' && item.weekDay.includes(weekDay)?
+                <TouchableOpacity onPress={() => {
+                  setEditId(item.id);
+                  navigation.naviagte('Edit');
+                }}>
+                  {
+                    <HabitItem habit={item} />
+                  }
+                </TouchableOpacity>
+                :null
+              }
+            />
+          </ScrollView>
         </View>
+
 
       </View>
     </SafeAreaView>
@@ -268,28 +276,6 @@ const styles = StyleSheet.create({
   tasksList: {
     gap: 8,
   },
-  task: {
-    flexDirection: 'row',
-    padding: 12,
-    alignItems: 'center',
-    backgroundColor: 'rgba(111, 154, 227, 0.13)',
-    borderRadius: 10,
-    marginVertical: 4,
-  },
-  taskText: {
-    marginLeft: 8,
-    fontSize: 15,
-    color: '#333333',
-  },
-
-  deleteIcon: {
-    width: 24,
-    height: 24,
-    tintColor: '#5271FF',
-    marginLeft: 'auto',
-    tintColor: "tomato"
-  },
-
 
   icon: {
     width: 30,
@@ -301,6 +287,20 @@ const styles = StyleSheet.create({
     color: '#666666',
     marginTop: 4,
   },
+  habitSection: {
+    paddingHorizontal: 20,
+    padding:20,
+    borderRadius: 16,
+    marginBottom: -10,
+    backgroundColor: '#FFF',
+    height: '100%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    
+  },
+
   addIconContainer: {
     width: 56,
     height: 56,

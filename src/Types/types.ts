@@ -23,3 +23,8 @@ export type habitStoreType={
     editHabit: (id:number,newValue:Partial<HabitType>)=>void;
     setHabits:(habits:HabitType[])=>void;
 }
+export type editStoreType={
+    editId:number | null;
+    setEditId : (id:number)=>void;
+    clearEditId:()=>void
+}
