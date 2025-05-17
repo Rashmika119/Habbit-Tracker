@@ -16,12 +16,12 @@ export default function AddScreen() {
 
 
     const toggleDay = (day: string) => {
-        setDays((prevDays: string[]) =>
-            prevDays.includes(day)
-                ? prevDays.filter(d => d !== day)
-                : [...prevDays, day]
+        const updatedDays=habitText.weekDay.includes(day)
+        ?habitText.weekDay.filter(d=>d!==day)
+        :[...habitText.weekDay,day];
 
-        );
+        setHabitText(updatedDays,"weekDay");
+
 
     };
 
@@ -80,7 +80,7 @@ export default function AddScreen() {
                     <Text style={styles.label}>Select the day of your task</Text>
                     <View style={styles.daysWrapper}>
                         {allDays.map((day) => (
-                            <View key={day} style={styles.checkBoxItem}>
+                            <View key={day+habitText.weekDay.join(",")} style={styles.checkBoxItem}>
                                 <CheckBox
                                     disabled={habitText.frequency === "Daily"}
                                     value={habitText.weekDay.includes(day)}
@@ -139,8 +139,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'rgba(165, 192, 237, 0.1)',
-
-
+        
     },
     header: {
         backgroundColor: 'rgba(4, 96, 98, 0.52)',// light gray

@@ -71,29 +71,14 @@ function HomeScreen({ navigation }: any) {
     { id: 4, task: "Skipping Dinner", completed: true, behavior: "Bad", weekDay: "EveryDay", time: "Night" },
   ];
 
-  //Function to get the relevant time icon
-  const getTimeIcon = (time: string) => {
-    switch (time) {
-      case 'Morning':
-        return require("../Assets/morning.png");
-      case 'Afternoon':
-        return require("../Assets/afternoon.png");
-      case 'Evening':
-        return require("../Assets/evening.png");
-      case 'Night':
-        return require("../Assets/night.png");
-      default:
-        return null;
-    }
 
-  };
 
 
   //const [checked, setChecked] = useState([false, false, false]);
   const todayHabits=habits.filter(habit=>habit.frequency==="Daily" || habit.frequency=='Weekly' && habit.weekDay.includes(weekDay));
   const completedTasks = todayHabits.filter(habit=>habit.completed).length;
-  const totalTodayTasks = tasks.length;
-  const progress = totalTodayTasks === 0 ? 0 : (completedTasks / totalTodayTasks) * 100;
+  const totalTodayTasks = tasks.length; 
+  const progress = (completedTasks / totalTodayTasks) * 100;
 
   const { setEditId } = useEditStore();
 
@@ -104,12 +89,19 @@ function HomeScreen({ navigation }: any) {
     Evening:3,
     Night:4,
   }
-  const sortedHabits=[...todayHabits].sort((a,b)=>{
+  const sortedHabits=habits
+  .filter(item=>
+    item.frequency==='Daily' ||
+    (item.frequency==='Weekly' && item.weekDay.includes(weekDay))
+  )
+  
+  .sort((a,b)=>{
     if(a.completed !== b.completed){
-      return a.completed ? -1 : 1;
+      return a.completed ? 1 : -1;
     }
-    return timeOrder[a.timeRange as keyof typeof timeOrder] - timeOrder[b.timeRange as keyof typeof timeOrder];
-  })
+    return timeOrder[a.timeRange as keyof typeof timeOrder] - 
+    timeOrder[b.timeRange as keyof typeof timeOrder];
+  });
 
   return (
     <SafeAreaView style={styles.container}>
@@ -147,14 +139,13 @@ function HomeScreen({ navigation }: any) {
             </View>
           </View>
         </View>
-        <View style={styles.habitSection}>
-          <Text style={styles.sectionTitle}>Today habita</Text>
-          <ScrollView >
+        <View style={styles.habitsContainer}>
+          <Text style={styles.sectionTitle}>Today habits</Text>
+         <ScrollView style={styles.habitsList}>
             <FlatList
               data={sortedHabits}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) =>
-                item.frequency === 'Daily' || item.frequency === 'Weekly' && item.weekDay.includes(weekDay)?
                 <TouchableOpacity onPress={() => {
                   setEditId(item.id);
                   navigation.naviagte('Edit');
@@ -163,10 +154,11 @@ function HomeScreen({ navigation }: any) {
                     <HabitItem habit={item} />
                   }
                 </TouchableOpacity>
-                :null
+                
               }
             />
-          </ScrollView>
+         </ScrollView>
+
         </View>
 
 
@@ -287,13 +279,12 @@ const styles = StyleSheet.create({
     color: '#666666',
     marginTop: 4,
   },
-  habitSection: {
+  habitsContainer: {
     paddingHorizontal: 20,
     padding:20,
     borderRadius: 16,
-    marginBottom: -10,
     backgroundColor: '#FFF',
-    height: '100%',
+  
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -320,6 +311,12 @@ const styles = StyleSheet.create({
     height: 28,
     tintColor: '#FFFFFF',
   },
+  habitsList:{
+      height: '55%',
+        paddingHorizontal: 20,
+        marginBottom: 20,
+        backgroundColor: '#F5F7FA',
+  }
 });
 
 export default HomeScreen;

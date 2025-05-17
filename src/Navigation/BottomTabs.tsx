@@ -60,7 +60,6 @@ export default function BottomTabs() {
 }
 const styles = StyleSheet.create({
     tabBar: {
-        marginTop: 20,
         backgroundColor: '#FFFFFF',
         flexDirection: 'row',
         justifyContent: 'space-around',

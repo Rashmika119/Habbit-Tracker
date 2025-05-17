@@ -37,28 +37,48 @@ const HabitItem = ({ habit }: { habit: HabitType }) => {
             }
         )
     };
-    const toggleCheckBox = (index: number) => {
-        const newChecked = [...checked];
-        newChecked[index] = !newChecked[index];
-        setChecked(newChecked);
+
+    //Function to get the relevant time icon
+    const getTimeIcon = (time: string) => {
+        switch (time) {
+            case 'Morning':
+                return require("../Assets/morning.png");
+            case 'Afternoon':
+                return require("../Assets/afternoon.png");
+            case 'Evening':
+                return require("../Assets/evening.png");
+            case 'Night':
+                return require("../Assets/night.png");
+            default:
+                return null;
+        }
+
     };
 
     return (
         <View>
-            <View style={styles.task}>
+            <View style={[
+                styles.task,
+                habit.behavior === 'Good' ?
+                    styles.taskGood : styles.taskBad]}>
                 <CheckBox
                     value={habit.completed}
                     onValueChange={() => handleDone(habit.id)}
                     tintColors={{ true: '#5271FF', false: '#CCCCCC' }}
                 />
+                <Image
+                    source={getTimeIcon(habit.timeRange)}
+                    style={styles.timeIcon}
+                />
+
                 <Text style={[styles.taskText, habit.completed && styles.habotTextCompleted]}
                     numberOfLines={1}
                     ellipsizeMode="tail"
                 >
                     {habit.task}
                 </Text>
-                <TouchableOpacity onPress={()=>confirmDelete()}
-                style={styles.deleteButton}>
+                <TouchableOpacity onPress={() => confirmDelete()}
+                    style={styles.deleteButton}>
                     <Image source={require("../Assets/delete.png")} style={styles.deleteIcon}></Image>
                 </TouchableOpacity>
             </View>
@@ -66,40 +86,63 @@ const HabitItem = ({ habit }: { habit: HabitType }) => {
     );
 
 }
-const styles = StyleSheet.create({ 
+const styles = StyleSheet.create({
     task: {
-    flexDirection: 'row',
-    padding: 12,
-    alignItems: 'center',
-    backgroundColor: 'rgba(111, 154, 227, 0.13)',
-    borderRadius: 10,
-    marginVertical: 4,
-  },
-   
+        flexDirection: 'row',
+        padding: 12,
+        alignItems: 'center',
+        backgroundColor: 'rgba(111, 154, 227, 0.13)',
+        borderRadius: 10,
+        marginVertical: 4,
+    },
+    goodHabit: {
+        backgroundColor: 'rgba(173, 230, 181, 0.2)', // light greenish
+    },
 
-  taskText: {
-    flex: 1,
-    marginLeft: 12,
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#333333',
-  },
-  habotTextCompleted: {
-    color: '#9CA3AF',
-    textDecorationLine: 'line-through',
-    fontWeight: '400',
-  },
-  deleteButton: {
-    padding: 8,
-    borderRadius: 10,
-    backgroundColor: '#FEE2E2',
-    marginLeft: 12,
-  },
-  deleteIcon: {
-    width: 20,
-    height: 20,
-    tintColor: '#EF4444',
-  }
+    badHabit: {
+        backgroundColor: 'rgba(255, 189, 189, 0.2)', // light reddish
+    },
+
+
+    taskText: {
+        flex: 1,
+        marginLeft: 12,
+        fontSize: 16,
+        fontWeight: '500',
+        color: '#333333',
+    },
+    habotTextCompleted: {
+        color: '#9CA3AF',
+        textDecorationLine: 'line-through',
+        fontWeight: '400',
+    },
+    deleteButton: {
+        padding: 8,
+        borderRadius: 10,
+        backgroundColor: '#FEE2E2',
+        marginLeft: 12,
+    },
+    deleteIcon: {
+        width: 20,
+        height: 20,
+        tintColor: '#EF4444',
+    },
+    timeIcon: {
+        width: 30,
+        height: 30,
+        marginHorizontal: 8,
+        resizeMode: 'cover',
+        borderRadius: 15,
+        borderWidth: 1,
+        borderColor: '#dddddd',
+        backgroundColor: '#f9f9f9',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+        elevation: 3,
+    },
+
 
 })
 export default HabitItem
