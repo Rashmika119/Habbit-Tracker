@@ -60,7 +60,7 @@ const HabitItem = ({ habit }: { habit: HabitType }) => {
             <View style={[
                 styles.task,
                 habit.behavior === 'Good' ?
-                    styles.taskGood : styles.taskBad]}>
+                    styles.goodHabit : styles.badHabit]}>
                 <CheckBox
                     value={habit.completed}
                     onValueChange={() => handleDone(habit.id)}

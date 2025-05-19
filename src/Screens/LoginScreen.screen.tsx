@@ -26,12 +26,8 @@ function LoginScreen({ navigation }: any) {
                         <TouchableOpacity onPress={() => { navigation.navigate('Register') }}>
                             <Text style={styles.registerLink}>Register</Text>
                         </TouchableOpacity>
-        
                     </View>
-        
                 </SafeAreaView>
-        
-
     );
 }
 const styles = StyleSheet.create({

@@ -6,9 +6,11 @@ import LinearGradient from "react-native-linear-gradient";
 import { useEditStore, useHabitStore, useHabitTextStore } from "../Store/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import HabitItem from "../Components/HabitItem";
+import Calender from "../Components/Calender";
 
 function HomeScreen({ navigation }: any) {
 
+  //exit the app functionality
   useEffect(() => {
     const onBackPress = () => {
       BackHandler.exitApp()
@@ -24,6 +26,7 @@ function HomeScreen({ navigation }: any) {
   const { habitText, setHabitText } = useHabitTextStore(state => state);
   const { habits, addHabit, deleteHabit, handleDone, setHabits } = useHabitStore(state => state);
 
+  //getting habits from async storage
   useEffect(() => {
     const getHabits = async () => {
       try {
@@ -38,6 +41,22 @@ function HomeScreen({ navigation }: any) {
     getHabits();
   }, []);
 
+  //reset the habits checkboxes and the progress in everday
+  useEffect(() => {
+    const resetHabitsIfNewDay = async () => {
+      const todayDate = new Date().toDateString();
+      const lastResetDate = await AsyncStorage.getItem("lastResetDate");
+      if (lastResetDate !== todayDate) {
+        const updatedHabits = habits.map((habit) => ({
+          ...habit,
+          completed: false,
+        }));
+        useHabitStore.getState().setHabits(updatedHabits);
+        await AsyncStorage.setItem('lastResetDate', todayDate)
+      }
+    };
+    resetHabitsIfNewDay();
+  }, []);
 
   // Get the current date
   const today = new Date();
@@ -46,6 +65,7 @@ function HomeScreen({ navigation }: any) {
   //Get the Day with Suffix
   const day = today.getDate();
 
+  //suffixes for date
   const getDaySuffix = (day: number) => {
     if (day > 3 && day < 21)
       return 'th';
@@ -56,6 +76,8 @@ function HomeScreen({ navigation }: any) {
       default: return "th";
     }
   };
+
+  //getting days,date and month to make the formatted date
   const dayWithSuffix = `${day}${getDaySuffix(day)}`;
   const month = today.toLocaleDateString('en-US', { month: 'long' });
   const year = today.getFullYear();
@@ -63,45 +85,56 @@ function HomeScreen({ navigation }: any) {
   //Get the Date in the format (Monday , 23rd Decemeber 2025)
   const formattedDate = `${weekDay}, ${dayWithSuffix} of ${month}, ${year}`;
 
-  // Move state here (top level of the component)
-  const tasks = [
-    { id: 1, task: "Exercise", completed: false, behavior: "Good", weekDay: "EveryDay", time: "Morning" },
-    { id: 2, task: "Meditation", completed: true, behavior: "Good", weekDay: "WednesDay", time: "Afternoon" },
-    { id: 3, task: "Reading", completed: false, behavior: "Good", weekDay: "Monday", time: "Evening" },
-    { id: 4, task: "Skipping Dinner", completed: true, behavior: "Bad", weekDay: "EveryDay", time: "Night" },
-  ];
+  //today Good habit progress
+  const todayGoodHabits = habits.filter(habit => habit.frequency === "Daily" && habit.behavior === 'Good' || habit.frequency == 'Weekly' && habit.weekDay.includes(weekDay) && habit.behavior === 'Good');
+  const completedGoodHabits = todayGoodHabits.filter(habit => habit.completed).length;
+  const totalTodayGoodHabits = todayGoodHabits.length;
+  const goodHabitProgress = totalTodayGoodHabits === 0 ? 0 : (completedGoodHabits / totalTodayGoodHabits) * 100;
 
-
-
-
-  //const [checked, setChecked] = useState([false, false, false]);
-  const todayHabits=habits.filter(habit=>habit.frequency==="Daily" || habit.frequency=='Weekly' && habit.weekDay.includes(weekDay));
-  const completedTasks = todayHabits.filter(habit=>habit.completed).length;
-  const totalTodayTasks = tasks.length; 
-  const progress = (completedTasks / totalTodayTasks) * 100;
+  //today Bad habit progress
+  const todayBadHabits = habits.filter(habit => habit.frequency === "Daily" && habit.behavior === 'Bad' || habit.frequency == 'Weekly' && habit.weekDay.includes(weekDay) && habit.behavior === 'Bad');
+  const completedBadHabits = todayBadHabits.filter(habit => habit.completed).length;
+  const totalTodayBadHabits = todayBadHabits.length;
+  const badHabitProgress = totalTodayBadHabits === 0 ? 0 : (completedBadHabits / totalTodayBadHabits) * 100;
 
   const { setEditId } = useEditStore();
 
+  //SaveToday habit progress in Async Storage
+  useEffect(() => {
+    const todayDate = new Date().toDateString();
+    AsyncStorage.setItem(`progress-${todayDate}`, goodHabitProgress.toString());
+  }, [goodHabitProgress]);
+
   //sort habits
-  const timeOrder={
-    Morning:1,
-    Afternoon:2,
-    Evening:3,
-    Night:4,
+  const timeOrder = {
+    Morning: 1,
+    Afternoon: 2,
+    Evening: 3,
+    Night: 4,
   }
-  const sortedHabits=habits
-  .filter(item=>
-    item.frequency==='Daily' ||
-    (item.frequency==='Weekly' && item.weekDay.includes(weekDay))
-  )
-  
-  .sort((a,b)=>{
-    if(a.completed !== b.completed){
-      return a.completed ? 1 : -1;
-    }
-    return timeOrder[a.timeRange as keyof typeof timeOrder] - 
-    timeOrder[b.timeRange as keyof typeof timeOrder];
-  });
+
+  //sorting habits morning-->night and push bottom the completed tasks
+  const sortedHabits = habits
+    .filter(item =>
+      item.frequency === 'Daily' ||
+      (item.frequency === 'Weekly' && item.weekDay.includes(weekDay))
+    )
+
+    .sort((a, b) => {
+      if (a.completed !== b.completed) {
+        return a.completed ? 1 : -1;
+      }
+      return timeOrder[a.timeRange as keyof typeof timeOrder] -
+        timeOrder[b.timeRange as keyof typeof timeOrder];
+    });
+
+
+  //good habit or Bad habit 
+  const [selectedBehavior, setSelectedBehavior] = useState('Good');
+  const goodHabits = sortedHabits.filter(habit => habit.behavior === 'Good');
+  const badHabits = sortedHabits.filter(habit => habit.behavior === 'Bad');
+
+  const filteredHabits = selectedBehavior === 'Good' ? goodHabits : badHabits;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -124,40 +157,96 @@ function HomeScreen({ navigation }: any) {
         </ImageBackground>
       </View>
 
+      <View style={styles.streakContainer}>
+        <Text style={styles.streakTitle}>Your strike</Text>
+        <View style={styles.calenderContainer}>
+          <Calender />
+        </View>
+      </View>
       <View style={styles.content}>
+
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Today Progress</Text>
-          <View style={styles.progressBarContainer}>
-            <View style={styles.circle}>
-              <View
-                style={[
-                  styles.fill,
-                  { height: `${progress}%`, backgroundColor: '#5271FF' }
-                ]}
-              />
-              <Text style={styles.percentText}>{Math.round(progress)}%</Text>
+          <View style={styles.progressContainer}>
+            <View style={styles.progressBar}>
+              <View style={styles.circle}>
+                <View
+                  style={[
+                    styles.fill,
+                    { height: `${goodHabitProgress}%`, backgroundColor: '#4ade80' }
+                  ]}
+                />
+                <Text style={styles.percentText}>{Math.round(goodHabitProgress)}%</Text>
+              </View>
+              <Text>Good</Text>
+            </View>
+            <View style={styles.progressBar}>
+              <View style={styles.circle}>
+                <View
+                  style={[
+                    styles.fill,
+                    { height: `${badHabitProgress}%`, backgroundColor: '#f87171' }
+                  ]}
+                />
+                <Text style={styles.percentText}>{Math.round(badHabitProgress)}%</Text>
+              </View>
+              <Text>Bad</Text>
             </View>
           </View>
         </View>
         <View style={styles.habitsContainer}>
           <Text style={styles.sectionTitle}>Today habits</Text>
-         <ScrollView style={styles.habitsList}>
+
+          {/*Filter buttons*/}
+          <View style={styles.buttonRow}>
+            <TouchableOpacity
+              style={[
+                styles.filterButton,
+                selectedBehavior === 'Good' && styles.selectedButton
+              ]}
+              onPress={() => setSelectedBehavior('Good')}
+            >
+              <Text style={[
+                styles.buttonText,
+                selectedBehavior === 'Good' && styles.selectedButtonText
+              ]}>
+                Good
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.filterButton,
+                selectedBehavior === 'Bad' && styles.selectedButton
+              ]}
+              onPress={() => setSelectedBehavior('Bad')}
+            >
+              <Text style={[
+                styles.buttonText,
+                selectedBehavior === 'Bad' && styles.selectedButtonText
+              ]}>
+                Bad
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView style={styles.habitsList}>
             <FlatList
-              data={sortedHabits}
+              data={filteredHabits}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) =>
                 <TouchableOpacity onPress={() => {
                   setEditId(item.id);
-                  navigation.naviagte('Edit');
+                  navigation.navigate('Edit');
                 }}>
                   {
                     <HabitItem habit={item} />
                   }
                 </TouchableOpacity>
-                
+
               }
             />
-         </ScrollView>
+          </ScrollView>
 
         </View>
 
@@ -171,9 +260,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'rgba(165, 192, 237, 0.1)',
+    flexDirection: 'column'
+
   },
   headerSection: {
-    height: 180,
+    height: 150,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
     overflow: 'hidden',
@@ -194,7 +285,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(4, 97, 98, 0.3)',
   },
   header: {
-    marginTop: 20,
+    marginTop: 8,
   },
   welcomeText: {
     fontSize: 16,
@@ -209,7 +300,8 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   dateContainer: {
-    marginTop: 16,
+    marginTop: 8,
+    marginBottom: 10,
   },
   dateText: {
     color: '#FFFFFF',
@@ -217,16 +309,38 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     opacity: 0.9,
   },
+  streakTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333333',
+    marginBottom: 10,
+    paddingLeft:20
+  },
+
+  streakContainer: {
+    paddingTop: 20,
+   
+
+  },
+
+  calenderContainer: {
+    marginBottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+
+
+  },
+
   content: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 24,
+    paddingTop: 20,
   },
   card: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 20,
-    marginBottom: 20,
+    marginBottom: 15,
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -237,16 +351,21 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333333',
-    marginBottom: 15,
+    marginBottom: 10,
   },
-  progressBarContainer: {
+  progressBar: {
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 14,
+    paddingVertical: 10,
+    width: '45%',
+  },
+  progressContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
   },
   circle: {
-    width: 120,
-    height: 120,
+    width: 100,
+    height: 100,
     borderRadius: 60,
     borderWidth: 10,
     borderColor: '#EEEEEE',
@@ -280,16 +399,53 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   habitsContainer: {
+    flex: 1,
     paddingHorizontal: 20,
-    padding:20,
+    padding: 20,
     borderRadius: 16,
     backgroundColor: '#FFF',
-  
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
-    
+
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginVertical: 12,
+    gap: 10,
+  },
+
+  filterButton: {
+    width: 120,
+    paddingVertical: 8,
+    alignItems: 'center',
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: '#5271FF',
+    backgroundColor: '#ffffff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+
+  selectedButton: {
+    backgroundColor: '#5271FF',
+    borderColor: '#5271FF',
+  },
+
+  buttonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#5271FF',
+  },
+
+  // When selected, override text color
+  selectedButtonText: {
+    color: '#ffffff',
   },
 
   addIconContainer: {
@@ -311,11 +467,9 @@ const styles = StyleSheet.create({
     height: 28,
     tintColor: '#FFFFFF',
   },
-  habitsList:{
-      height: '55%',
-        paddingHorizontal: 20,
-        marginBottom: 20,
-        backgroundColor: '#F5F7FA',
+  habitsList: {
+    paddingHorizontal: 10,
+    backgroundColor: '#F5F7FA',
   }
 });
 
