@@ -3,7 +3,7 @@ import { Picker } from "@react-native-picker/picker";
 import { Button, ImageBackground, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { useState } from "react";
 import { RadioButton } from "react-native-paper";
-import { useHabitStore, useHabitTextStore } from "../Store/store";
+import { useHabitStore, useHabitTextStore } from "../Store/habitStore";
 
 const allDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const timeOptions = ["Morning", "Afternoon", "Evening", "Night"]

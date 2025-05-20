@@ -3,7 +3,7 @@ import { BackHandler, FlatList, ImageBackground, SafeAreaView, ScrollView, Style
 import CheckBox from '@react-native-community/checkbox';
 import { Image } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
-import { useEditStore, useHabitStore, useHabitTextStore } from "../Store/store";
+import { useEditStore, useHabitStore, useHabitTextStore } from "../Store/habitStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import HabitItem from "../Components/HabitItem";
 import Calender from "../Components/Calender";

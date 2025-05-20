@@ -1,7 +1,10 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useUserStore, useUserTextStore } from '../Store/userStore';
 
 function LoginScreen({ navigation }: any) {
+    const {sihnInUser}=useUserStore();
+    const signInUser = useUserStore((state) => state.signInUser);
     return (
          <SafeAreaView style={styles.container}>
                     <View style={styles.loginForm}>
@@ -11,14 +14,16 @@ function LoginScreen({ navigation }: any) {
                             <TextInput
                                 placeholder="Username"
                                 style={styles.textInput}
+                                onChangeText={(text)=>useUserTextStore.getState().setUserText(text,"username")}    
                             />
                             <TextInput
                                 placeholder="Password"
                                 style={styles.textInput}
+                                onChangeText={(text)=>useUserTextStore.getState().setUserText(text,"password")}  
                             />
                         </View>
                     </View>
-                    <TouchableOpacity onPress={()=>{navigation.navigate('Home')}} style={styles.buttonContainer}>
+                    <TouchableOpacity onPress={()=>signInUser(navigation)} style={styles.buttonContainer}>
                         <Text style={styles.loginButton}>Login</Text>
                     </TouchableOpacity>
                     <View style={styles.footer}>

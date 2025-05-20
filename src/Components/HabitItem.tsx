@@ -1,5 +1,5 @@
 import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useHabitStore } from "../Store/store";
+import { useHabitStore } from "../Store/habitStore";
 import CheckBox from "@react-native-community/checkbox";
 import { useState } from "react";
 

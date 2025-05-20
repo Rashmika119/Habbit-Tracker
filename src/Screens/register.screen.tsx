@@ -1,7 +1,10 @@
 import React from 'react';
 import { Button, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useUserStore, useUserTextStore } from '../Store/userStore';
 
 function RegisterScreen(navigation: any) {
+
+    const signUpUser = useUserStore((state) => state.signUpUser);
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.registrationForm}>
@@ -11,18 +14,21 @@ function RegisterScreen(navigation: any) {
                     <TextInput
                         placeholder="Username"
                         style={styles.textInput}
+                        onChangeText={(text) => useUserTextStore.getState().setUserText(text, "username")}
                     />
                     <TextInput
                         placeholder="Email"
                         style={styles.textInput}
+                        onChangeText={(text) => useUserTextStore.getState().setUserText(text, "email")}
                     />
                     <TextInput
                         placeholder="Password"
                         style={styles.textInput}
+                        onChangeText={(text) => useUserTextStore.getState().setUserText(text, "password")}
                     />
                 </View>
             </View>
-            <TouchableOpacity style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.buttonContainer} onPress={() => { signUpUser(navigation) }}>
                 <Text style={styles.registerButton}>Register</Text>
             </TouchableOpacity>
             <View style={styles.footer}>
