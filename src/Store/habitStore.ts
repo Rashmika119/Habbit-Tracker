@@ -1,5 +1,5 @@
 import {create} from 'zustand';
-import { editStoreType, habitStoreType, habitTextType, HabitType } from '../Types/types';
+import { editStoreType, habitStoreType, habitTextType, HabitType } from '../Types/habitTypes';
 import { Alert, Keyboard } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
