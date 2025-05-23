@@ -1,38 +1,49 @@
-import React from 'react';
-import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { Alert, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useUserStore, useUserTextStore } from '../Store/userStore';
 
+
 function LoginScreen({ navigation }: any) {
-    const {sihnInUser}=useUserStore();
     const signInUser = useUserStore((state) => state.signInUser);
+    const [userData, setUserData] = useState({
+        username: "",
+        password: ""
+    })
+    const handleLogin = () => {
+        if (!userData.username.trim() || !userData.password.trim()) {
+            Alert.alert("Please fill all the fields");
+            return;
+        }
+        signInUser(navigation,userData);
+    }
     return (
-         <SafeAreaView style={styles.container}>
-                    <View style={styles.loginForm}>
-                        <Text style={styles.header}>Welome Back</Text>
-                        <Text style={styles.subheader}>Login to your account</Text>
-                        <View style={styles.inputFields}>
-                            <TextInput
-                                placeholder="Username"
-                                style={styles.textInput}
-                                onChangeText={(text)=>useUserTextStore.getState().setUserText(text,"username")}    
-                            />
-                            <TextInput
-                                placeholder="Password"
-                                style={styles.textInput}
-                                onChangeText={(text)=>useUserTextStore.getState().setUserText(text,"password")}  
-                            />
-                        </View>
-                    </View>
-                    <TouchableOpacity onPress={()=>signInUser(navigation)} style={styles.buttonContainer}>
-                        <Text style={styles.loginButton}>Login</Text>
-                    </TouchableOpacity>
-                    <View style={styles.footer}>
-                        <Text style={styles.footerText}>Don't you have an account? </Text>
-                        <TouchableOpacity onPress={() => { navigation.navigate('Register') }}>
-                            <Text style={styles.registerLink}>Register</Text>
-                        </TouchableOpacity>
-                    </View>
-                </SafeAreaView>
+        <SafeAreaView style={styles.container}>
+            <View style={styles.loginForm}>
+                <Text style={styles.header}>Welome Back</Text>
+                <Text style={styles.subheader}>Login to your account</Text>
+                <View style={styles.inputFields}>
+                    <TextInput
+                        placeholder="Username"
+                        style={styles.textInput}
+                        onChangeText={(text) => setUserData({ ...userData, username: text })}
+                    />
+                    <TextInput
+                        placeholder="Password"
+                        style={styles.textInput}
+                        onChangeText={(text) => setUserData({ ...userData, password: text })}
+                    />
+                </View>
+            </View>
+            <TouchableOpacity onPress={() => handleLogin()}>
+                <Text style={styles.loginButton}>Login</Text>
+            </TouchableOpacity>
+            <View style={styles.footer}>
+                <Text style={styles.footerText}>Don't you have an account? </Text>
+                <TouchableOpacity onPress={() => { navigation.navigate('Register') }}>
+                    <Text style={styles.registerLink}>Register</Text>
+                </TouchableOpacity>
+            </View>
+        </SafeAreaView>
     );
 }
 const styles = StyleSheet.create({

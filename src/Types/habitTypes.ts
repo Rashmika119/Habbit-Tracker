@@ -17,11 +17,16 @@ export type habitTextType={
 
 export type habitStoreType={
     habits:HabitType[];
+    progress:any[];
+    calendar:any[];
+
     addHabit:()=>void;
     deleteHabit:(id:number | undefined) => void;
     handleDone : (id:number) =>void;
     editHabit: (id:number,newValue:Partial<HabitType>)=>void;
     setHabits:(habits:HabitType[])=>void;
+    setProgress:(progress:any[])=>void;
+    setCalendar:(calendar:any[])=>void;
 }
 export type editStoreType={
     editId:number | null;

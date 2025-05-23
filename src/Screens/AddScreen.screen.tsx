@@ -11,7 +11,8 @@ export default function AddScreen() {
 
     const { habits, addHabit, setHabits } = useHabitStore(state => state);
 
-    const { habitText, setHabitText } = useHabitTextStore(state => state)
+    const habitText=  useHabitTextStore(state => state.habitText);
+    const setHabitText=useHabitTextStore(state=>state.setHabitText);
     const [days, setDays] = useState<string[]>([]);
 
 

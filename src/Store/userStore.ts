@@ -1,34 +1,36 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert, Keyboard } from "react-native";
 import { create } from "zustand"
-import { userStoreType, userTextType, UserType } from "../Types/userTypes";
+import { userInputType, userStoreType, userTextType, UserType } from "../Types/userTypes";
+import { use } from "react";
+import { useAuthStore } from "./useAuthStore";
 
 export const useUserTextStore = create<userTextType>((set) => ({
-    userText: {
+  userText: {
+    id: 0,
+    username: "",
+    email: "",
+    password: "",
+
+  },
+  setUserText: (value: string, key: keyof UserType) => {
+    set((state) => ({
+      userText: {
+        ...state.userText,
+        [key]: value,
+      }
+    }));
+  },
+  clearUserText: () => {
+    set(() => ({
+      userText: {
         id: 0,
         username: "",
         email: "",
         password: "",
-
-    },
-    setUserText: (value: string, key: keyof UserType) => {
-        set((state) => ({
-            userText: {
-                ...state.userText,
-                [key]: value,
-            }
-        }));
-    },
-    clearUserText: () => {
-        set(() => ({
-            userText: {
-                id: 0,
-                username: "",
-                email: "",
-                password: "",
-            }
-        }))
-    }
+      }
+    }))
+  }
 }))
 
 export const useUserStore = create<userStoreType>((set) => ({
@@ -61,6 +63,16 @@ export const useUserStore = create<userStoreType>((set) => ({
         const updatedUsers = [...existingUsers, newUser];
         await AsyncStorage.setItem("my-user", JSON.stringify(updatedUsers));
 
+        // Save logged-in user for auto login
+        await AsyncStorage.setItem("logged-in-user", JSON.stringify(newUser));
+
+        //  Clear user-specific data (habits, progress, calendar)
+        await AsyncStorage.setItem(`my-habit-${newUser.id}`, JSON.stringify([]));
+        await AsyncStorage.setItem(`progress-${newUser.id}`, JSON.stringify([]));
+        await AsyncStorage.setItem(`lastRasetDate-${newUser.id}`, JSON.stringify([]));
+
+
+
         set({ users: updatedUsers });
         Alert.alert("User Added Successfully");
         navigation.navigate("Home");
@@ -73,28 +85,29 @@ export const useUserStore = create<userStoreType>((set) => ({
     }
   },
 
-  signInUser: async (navigation: any) => {
+  signInUser: async (navigation: any,userData:userInputType) => {
     const { userText, clearUserText } = useUserTextStore.getState();
 
     try {
-      const { username, password } = userText;
-
-      if (!username.trim() || !password.trim()) {
-        Alert.alert("Please fill all the fields");
-        return;
-      }
-
+      
       const existingUsersString = await AsyncStorage.getItem("my-user");
       const existingUsers = existingUsersString ? JSON.parse(existingUsersString) : [];
 
       const loggedInUser = existingUsers.find(
-        (user: any) => user.username === username && user.password === password
+        (user: any) => user.username === userData.username && user.password === userData.password 
       );
 
       if (!loggedInUser) {
         Alert.alert("Invalid username or password");
         return;
       }
+
+      //store user data for auto login
+      await AsyncStorage.setItem("logged-in-user", JSON.stringify(loggedInUser));
+      //await loadUserData(loggedInUser)
+
+      //set current user in auth store
+      useAuthStore.getState().setCurrentUser(loggedInUser);
 
       Alert.alert("User logged in Successfully");
       clearUserText();
@@ -110,8 +123,13 @@ export const useUserStore = create<userStoreType>((set) => ({
     const { clearUserText } = useUserTextStore.getState();
     try {
       clearUserText();
+      await AsyncStorage.removeItem("logged-in-user");
+
+      //Clear current user in auth store
+      useAuthStore.getState().clearCurrentUser();
+
       Keyboard.dismiss();
-      navigation.navigate("Home");
+      navigation.navigate("Login");
     } catch (error) {
       console.log("Logout error:", error);
     }

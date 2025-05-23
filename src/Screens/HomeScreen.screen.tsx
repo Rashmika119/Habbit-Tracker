@@ -7,9 +7,11 @@ import { useEditStore, useHabitStore, useHabitTextStore } from "../Store/habitSt
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import HabitItem from "../Components/HabitItem";
 import Calender from "../Components/Calender";
+import { useUserTextStore } from "../Store/userStore";
+import { useAuthStore } from "../Store/useAuthStore";
 
 function HomeScreen({ navigation }: any) {
-
+  const[loaded,setLoaded]=useState(false);
   //exit the app functionality
   useEffect(() => {
     const onBackPress = () => {
@@ -30,16 +32,19 @@ function HomeScreen({ navigation }: any) {
   useEffect(() => {
     const getHabits = async () => {
       try {
-        const habits = await AsyncStorage.getItem("my-habit");
-        if (habits) {
-          setHabits(JSON.parse(habits));
+        const habitsData = await AsyncStorage.getItem("my-habit");
+        if (habitsData) {
+          setHabits(JSON.parse(habitsData));
         }
+        setLoaded(true);
       } catch (error) {
         console.log(error);
       }
     };
     getHabits();
   }, []);
+
+
 
   //reset the habits checkboxes and the progress in everday
   useEffect(() => {
@@ -51,12 +56,16 @@ function HomeScreen({ navigation }: any) {
           ...habit,
           completed: false,
         }));
-        useHabitStore.getState().setHabits(updatedHabits);
+        setHabits(updatedHabits);
+        await AsyncStorage.setItem("my-habit", JSON.stringify(updatedHabits));
         await AsyncStorage.setItem('lastResetDate', todayDate)
       }
     };
-    resetHabitsIfNewDay();
-  }, []);
+    if(loaded){
+      resetHabitsIfNewDay();
+    }
+   
+  }, [loaded]);
 
   // Get the current date
   const today = new Date();
@@ -136,7 +145,10 @@ function HomeScreen({ navigation }: any) {
 
   const filteredHabits = selectedBehavior === 'Good' ? goodHabits : badHabits;
 
+  const username=useAuthStore(state=>state.currentUser?.username)
+
   return (
+    
     <SafeAreaView style={styles.container}>
       <View style={styles.headerSection}>
         <ImageBackground
@@ -147,7 +159,7 @@ function HomeScreen({ navigation }: any) {
           <View style={styles.overlay}>
             <View style={styles.header}>
               <Text style={styles.welcomeText}>Good day</Text>
-              <Text style={styles.userName}>Hi Rashmika</Text>
+              <Text style={styles.userName}>{username?.toUpperCase()}</Text>
             </View>
             <View style={styles.dateContainer}>
               <Text style={styles.dateText}>{formattedDate}</Text>
@@ -158,7 +170,7 @@ function HomeScreen({ navigation }: any) {
       </View>
 
       <View style={styles.streakContainer}>
-        <Text style={styles.streakTitle}>Your strike</Text>
+        <Text style={styles.streakTitle}>Your good habits streak</Text>
         <View style={styles.calenderContainer}>
           <Calender />
         </View>
@@ -240,7 +252,7 @@ function HomeScreen({ navigation }: any) {
                   navigation.navigate('Edit');
                 }}>
                   {
-                    <HabitItem habit={item} />
+                    <HabitItem habit={item}/>
                   }
                 </TouchableOpacity>
 
