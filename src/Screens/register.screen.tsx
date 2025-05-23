@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useUserStore, useUserTextStore } from '../Store/userStore';
 
-function RegisterScreen(navigation: any) {
+function RegisterScreen({navigation}:{navigation: any}) {
 
     const signUpUser = useUserStore((state) => state.signUpUser);
     return (
@@ -33,7 +33,7 @@ function RegisterScreen(navigation: any) {
             </TouchableOpacity>
             <View style={styles.footer}>
                 <Text style={styles.footerText}>Already have an account? </Text>
-                <TouchableOpacity onPress={() => { navigation.navigate('Login') }}>
+                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                     <Text style={styles.loginLink}>Login</Text>
                 </TouchableOpacity>
 

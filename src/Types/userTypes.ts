@@ -11,10 +11,15 @@ export type userTextType={
     clearUserText: ()=> void;
 }
 
+export type userInputType={
+  username:string;
+  password:string;
+}
+
 export type userStoreType={
   users: UserType[];
   signUpUser: (navigation: any) => Promise<void>;
-  signInUser: (navigation: any) => Promise<void>;
+  signInUser: (navigation: any,userData:userInputType) => Promise<void>;
   logoutUser: (navigation: any) => Promise<void>;
   setHabits: (users: UserType[]) => void;
 }
