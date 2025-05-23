@@ -109,6 +109,23 @@ export const useHabitStore = create<habitStoreType>((set) => ({
             console.log("Error in handleDone: ", error);
         }
     },
+    editHabit: async (id , newValue) => {
+        const { habits } = useHabitStore.getState();
+        const newHabitList = [...habits];
+        const index = newHabitList.findIndex((habit) => habit.id === id);
+        if (index < 0) return
+        newHabitList[index] = {
+            ...newHabitList[index] = {
+                ...newHabitList[index],
+                ...newValue,
+            }
+        }
+        await AsyncStorage.setItem("my-habit", JSON.stringify(newHabitList));
+
+        set(() => (
+            { habits: newHabitList }
+        ))
+    },
     setHabits: (habits: HabitType[]) => {
         set(() => ({
             habits: habits
@@ -125,20 +142,7 @@ export const useHabitStore = create<habitStoreType>((set) => ({
             calendar: calendar,
         }));
     },
-    editHabit: async (id: number | undefined, newValue) => {
-        const { habits } = useHabitStore.getState();
-        const newList = [...habits];
-        const index = newList.findIndex((habit) => habit.id === id);
-        if (index < 0) return
-        newList[index] = {
-            ...newList[index],
-            ...newValue,
-        }
-        await AsyncStorage.setItem("my-habit", JSON.stringify(newList));
-        set(() => (
-            { habits: newList }
-        ))
-    },
+
 
 }))
 

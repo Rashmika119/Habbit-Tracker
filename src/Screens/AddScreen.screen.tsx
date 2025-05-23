@@ -15,7 +15,6 @@ export default function AddScreen() {
     const setHabitText=useHabitTextStore(state=>state.setHabitText);
     const [days, setDays] = useState<string[]>([]);
 
-
     const toggleDay = (day: string) => {
         const updatedDays=habitText.weekDay.includes(day)
         ?habitText.weekDay.filter(d=>d!==day)
@@ -23,9 +22,7 @@ export default function AddScreen() {
 
         setHabitText(updatedDays,"weekDay");
 
-
     };
-
 
     return (
         <View style={styles.container}>
