@@ -9,7 +9,7 @@ const allDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday
 const timeOptions = ["Morning", "Afternoon", "Evening", "Night"]
 export default function AddScreen() {
 
-    const { habits, addHabit, setHabits } = useHabitStore(state => state);
+    const { habits, addHabit } = useHabitStore(state => state);
 
     const habitText=  useHabitTextStore(state => state.habitText);
     const setHabitText=useHabitTextStore(state=>state.setHabitText);
@@ -26,13 +26,16 @@ export default function AddScreen() {
 
     return (
         <View style={styles.container}>
-            <ImageBackground
-                source={require('../Assets/headerbackground.png')}
-                style={styles.header}
-                resizeMode="cover"
-            >
-                <Text style={styles.headerText}>Add Your Task Here</Text>
-            </ImageBackground>
+      <View style={styles.headerSection}>
+        <ImageBackground source={require("../Assets/headerbackground.png")} style={styles.background} resizeMode="cover">
+          <View style={styles.overlay}>
+            <View style={styles.header}>
+              <Text style={styles.welcomeText}>Add a vision to your life</Text>
+              <Text style={styles.userName}>Add Your Tasks</Text>
+            </View>
+          </View>
+        </ImageBackground>
+      </View>
             <ScrollView style={styles.detailsContainer}>
                 <View style={styles.section}>
                     <Text style={styles.label}>Enter the title of your task</Text>
@@ -139,20 +142,42 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(165, 192, 237, 0.1)',
         
     },
-    header: {
-        backgroundColor: 'rgba(4, 96, 98, 0.52)',// light gray
-        paddingVertical: 20,
-        alignItems: 'center',
-        borderBottomWidth: 1,
-        borderBottomColor: '#ddd',
-        marginBottom: 15,
-    },
-
-    headerText: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        color: '#333',
-    },
+    headerSection: {
+    height: 120,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    overflow: "hidden",
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+  },
+  background: {
+    width: "100%",
+    height: "100%",
+  },
+  overlay: {
+    flex: 1,
+    paddingHorizontal: 24,
+    paddingTop: 40,
+    backgroundColor: "rgba(4, 97, 98, 0.3)",
+  },
+  header: {
+    marginTop: 1,
+  },
+  welcomeText: {
+    fontSize: 16,
+    color: "#FFFFFF",
+    fontWeight: "500",
+    opacity: 0.9,
+  },
+  userName: {
+    fontSize: 24,
+    color: "#FFFFFF",
+    fontWeight: "bold",
+    marginTop: 4,
+  },
     detailsContainer: {
         padding: 20,
         backgroundColor: '#f9fafb',
