@@ -89,7 +89,7 @@ const HabitItem = ({ habit }: { habit: HabitType }) => {
 const styles = StyleSheet.create({
     task: {
         flexDirection: 'row',
-        padding: 12,
+        padding: 8,
         alignItems: 'center',
         backgroundColor: 'rgba(111, 154, 227, 0.13)',
         borderRadius: 10,
