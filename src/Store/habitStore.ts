@@ -105,7 +105,7 @@ export const useHabitStore = create<habitStoreType>((set, get) => ({
     }
   },
 
-  // Updated handleDone to track completion by date
+// Replace your handleDone function with this:
 handleDone: async (id: number, date?: string) => {
   try {
     const { habits } = get()

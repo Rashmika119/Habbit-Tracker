@@ -7,13 +7,14 @@ import BottomTabs from "./BottomTabs";
 import RegisterScreen from "../Screens/Register.screen";
 import EditScreen from "../Screens/EditScreen.screen";
 
-
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigation() {
   const [loading, setLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const setCurrentUser = useAuthStore(state => state.setCurrentUser);
+
+  const setCurrentUser = useAuthStore((state: any) => state.setCurrentUser);
+  const setIsLoggedIn = useAuthStore((state: any) => state.setIsLoggedIn); // ✅ FIXED
+  const isLoggedIn = useAuthStore((state: any) => state.isLoggedIn);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -21,30 +22,28 @@ export default function AppNavigation() {
       if (userString) {
         const user = JSON.parse(userString);
         setCurrentUser(user);
-        setIsLoggedIn(true);
+        setIsLoggedIn(true); 
       }
       setLoading(false);
     };
     checkUser();
   }, []);
 
-  if (loading) return null; // loading screen
+  if (loading) return null; 
 
-return (
-  
-  //if a user loggedin, then directly navigate to the homescreen
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
-    {isLoggedIn ? (
-      <>
-        <Stack.Screen name="BottomTabs" component={BottomTabs} />
-        <Stack.Screen name="Edit" component={EditScreen} />
-      </>
-    ) : (
-      <>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} />
-      </>
-    )}
-  </Stack.Navigator>
-);
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {isLoggedIn ? (
+        <>
+          <Stack.Screen name="BottomTabs" component={BottomTabs} />
+          <Stack.Screen name="Edit" component={EditScreen} />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Register" component={RegisterScreen} />
+        </>
+      )}
+    </Stack.Navigator>
+  );
 }

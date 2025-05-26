@@ -1,25 +1,26 @@
 import React, { useState } from 'react';
 import { Alert, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useUserStore, useUserTextStore } from '../Store/userStore';
+import { useAuthStore } from '../Store/useAuthStore';
 
 
 function LoginScreen({ navigation }: any) {
     const signInUser = useUserStore((state) => state.signInUser);
-    const [userData, setUserData] = useState({
-        username: "",
-        password: ""
-    })
-    const handleLogin = () => {
+    const [userData, setUserData] = useState({ username: "", password: "" });
+
+    const handleLogin = async () => {
         if (!userData.username.trim() || !userData.password.trim()) {
             Alert.alert("Please fill all the fields");
             return;
         }
-        signInUser(navigation,userData);
-    }
+        await useUserStore.getState().signInUser(userData);
+        navigation.navigate("BottomTabs");
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.loginForm}>
-                <Text style={styles.header}>Welome Back</Text>
+                <Text style={styles.header}>Welcome Back</Text>
                 <Text style={styles.subheader}>Login to your account</Text>
                 <View style={styles.inputFields}>
                     <TextInput
@@ -29,22 +30,25 @@ function LoginScreen({ navigation }: any) {
                     />
                     <TextInput
                         placeholder="Password"
+                        secureTextEntry
                         style={styles.textInput}
                         onChangeText={(text) => setUserData({ ...userData, password: text })}
                     />
                 </View>
             </View>
-            <TouchableOpacity onPress={() => handleLogin()}>
+            <TouchableOpacity onPress={handleLogin}>
                 <Text style={styles.loginButton}>Login</Text>
             </TouchableOpacity>
             <View style={styles.footer}>
-                <Text style={styles.footerText}>Don't you have an account? </Text>
-                <TouchableOpacity onPress={() => { navigation.navigate('Register') }}>
+                <Text style={styles.footerText}>Don't have an account? </Text>
+                <TouchableOpacity onPress={() => navigation.navigate("Register")}>
                     <Text style={styles.registerLink}>Register</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
     );
+
+
 }
 const styles = StyleSheet.create({
     container: {

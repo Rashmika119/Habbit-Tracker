@@ -1,10 +1,17 @@
 import React from 'react';
 import { Button, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useUserStore, useUserTextStore } from '../Store/userStore';
+import { useNavigation } from '@react-navigation/native';
 
-function RegisterScreen({navigation}:{navigation: any}) {
+function RegisterScreen() {
 
     const signUpUser = useUserStore((state) => state.signUpUser);
+    const navigation = useNavigation();
+    const handleRegister = async () => {
+        await signUpUser(navigation);
+        // After registration, navigate to home (if needed)
+        navigation.navigate("BottomTabs" as never);  // navigate to BottomTabs
+    };
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.registrationForm}>
