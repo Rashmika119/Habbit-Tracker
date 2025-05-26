@@ -3,7 +3,7 @@ import type { editStoreType, habitStoreType, habitTextType, HabitType } from "..
 import { Alert, Keyboard } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
-const formatDateForStorage = (date:any) => {
+const formatDateForStorage = (date: any) => {
   if (typeof date === 'string') {
     return new Date(date).toDateString();
   }
@@ -21,7 +21,7 @@ export const useHabitTextStore = create<habitTextType>((set) => ({
     behavior: "",
     weekDay: [],
     timeRange: "",
-    completionHistory: {}, // Add completion history
+    completionHistory: {}, 
   },
 
   setHabitText: (value: string | boolean | string[] | Record<string, boolean>, key: keyof HabitType) => {
@@ -105,61 +105,61 @@ export const useHabitStore = create<habitStoreType>((set, get) => ({
     }
   },
 
-// Replace your handleDone function with this:
-handleDone: async (id: number, date?: string) => {
-  try {
-    const { habits } = get()
-    const dateKey = formatDateForStorage(date || new Date())
-    
-    console.log(" DEBUG handleDone:");
-    console.log("- habitId:", id);
-    console.log("- date param:", date);
-    console.log("- dateKey used:", dateKey);
+  // Replace your handleDone function with this:
+  handleDone: async (id: number, date?: string) => {
+    try {
+      const { habits } = get()
+      const dateKey = formatDateForStorage(date || new Date())
 
-    const newHabits = habits.map((habit) => {
-      if (habit.id === id) {
-        const updatedHistory = { ...habit.completionHistory }
+      console.log(" DEBUG handleDone:");
+      console.log("- habitId:", id);
+      console.log("- date param:", date);
+      console.log("- dateKey used:", dateKey);
 
-        console.log("Before update:", updatedHistory);
+      const newHabits = habits.map((habit) => {
+        if (habit.id === id) {
+          const updatedHistory = { ...habit.completionHistory }
 
-        // Toggle completion for the specific date only
-        if (updatedHistory[dateKey]) {
-          delete updatedHistory[dateKey]
-          console.log(" Unmarked for:", dateKey);
-        } else {
-          updatedHistory[dateKey] = true
-          console.log(" Marked complete for:", dateKey);
+          console.log("Before update:", updatedHistory);
+
+          // Toggle completion for the specific date only
+          if (updatedHistory[dateKey]) {
+            delete updatedHistory[dateKey]
+            console.log(" Unmarked for:", dateKey);
+          } else {
+            updatedHistory[dateKey] = true
+            console.log(" Marked complete for:", dateKey);
+          }
+
+          console.log(" After update:", updatedHistory);
+
+          return {
+            ...habit,
+            completionHistory: updatedHistory,
+            completed: !!updatedHistory[dateKey],
+          }
         }
+        return habit
+      })
 
-        console.log(" After update:", updatedHistory);
-
-        return {
-          ...habit,
-          completionHistory: updatedHistory,
-          completed: !!updatedHistory[dateKey],
-        }
-      }
-      return habit
-    })
-
-    await AsyncStorage.setItem("my-habit", JSON.stringify(newHabits))
-    set({ habits: newHabits })
-  } catch (error) {
-    console.log("Error in handleDone: ", error)
-  }
-},
+      await AsyncStorage.setItem("my-habit", JSON.stringify(newHabits))
+      set({ habits: newHabits })
+    } catch (error) {
+      console.log("Error in handleDone: ", error)
+    }
+  },
 
   // Helper function to check if habit is completed on specific date
-isHabitCompletedOnDate: (habitId: number, date: string) => {
-  const { habits } = get()
-  const habit = habits.find((h) => h.id === habitId)
-  const dateKey = formatDateForStorage(date)
-  
-  console.log("Checking completion for:", dateKey);
-  console.log("Completion history:", habit?.completionHistory);
-  
-  return habit?.completionHistory?.[dateKey] || false
-},
+  isHabitCompletedOnDate: (habitId: number, date: string) => {
+    const { habits } = get()
+    const habit = habits.find((h) => h.id === habitId)
+    const dateKey = formatDateForStorage(date)
+
+    console.log("Checking completion for:", dateKey);
+    console.log("Completion history:", habit?.completionHistory);
+
+    return habit?.completionHistory?.[dateKey] || false
+  },
   // Helper function to get completion status for today
   updateHabitsForToday: () => {
     const { habits } = get()
@@ -203,6 +203,13 @@ isHabitCompletedOnDate: (habitId: number, date: string) => {
   setCalendar: (calendar: any[]) => {
     set(() => ({
       calendar: calendar,
+    }))
+  },
+  clearStore: () => {
+    set(() => ({
+      habits: [],
+      progress: [],
+      calendar: [],
     }))
   },
 }))

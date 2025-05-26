@@ -30,6 +30,8 @@ export type habitStoreType = {
   setCalendar: (calendar: any[]) => void
   isHabitCompletedOnDate: (habitId: number, date: string) => boolean // Add helper function
   updateHabitsForToday: () => void // Add helper function
+  clearStore: () => void;
+  
 }
 
 export type editStoreType = {

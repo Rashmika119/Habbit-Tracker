@@ -11,31 +11,29 @@ export default function AddScreen() {
 
     const { habits, addHabit } = useHabitStore(state => state);
 
-    const habitText=  useHabitTextStore(state => state.habitText);
-    const setHabitText=useHabitTextStore(state=>state.setHabitText);
+    const habitText = useHabitTextStore(state => state.habitText);
+    const setHabitText = useHabitTextStore(state => state.setHabitText);
     const [days, setDays] = useState<string[]>([]);
 
     const toggleDay = (day: string) => {
-        const updatedDays=habitText.weekDay.includes(day)
-        ?habitText.weekDay.filter(d=>d!==day)
-        :[...habitText.weekDay,day];
-
-        setHabitText(updatedDays,"weekDay");
-
+        const updatedDays = habitText.weekDay.includes(day)
+            ? habitText.weekDay.filter(d => d !== day)
+            : [...habitText.weekDay, day];
+        setHabitText(updatedDays, "weekDay");
     };
 
     return (
         <View style={styles.container}>
-      <View style={styles.headerSection}>
-        <ImageBackground source={require("../Assets/headerbackground.png")} style={styles.background} resizeMode="cover">
-          <View style={styles.overlay}>
-            <View style={styles.header}>
-              <Text style={styles.welcomeText}>Add a vision to your life</Text>
-              <Text style={styles.userName}>Add Your Tasks</Text>
+            <View style={styles.headerSection}>
+                <ImageBackground source={require("../Assets/headerbackground.png")} style={styles.background} resizeMode="cover">
+                    <View style={styles.overlay}>
+                        <View style={styles.header}>
+                            <Text style={styles.welcomeText}>Add a vision to your life</Text>
+                            <Text style={styles.userName}>Add Your Tasks</Text>
+                        </View>
+                    </View>
+                </ImageBackground>
             </View>
-          </View>
-        </ImageBackground>
-      </View>
             <ScrollView style={styles.detailsContainer}>
                 <View style={styles.section}>
                     <Text style={styles.label}>Enter the title of your task</Text>
@@ -43,21 +41,21 @@ export default function AddScreen() {
                         style={styles.inputTitle}
                         placeholder="Habit Title"
                         value={habitText.task}
-                        onChangeText={(text)=>setHabitText(text,"task")}
+                        onChangeText={(text) => setHabitText(text, "task")}
                         multiline={true}
                         textAlignVertical='top'
                         autoCorrect={false}
                     >
                     </TextInput>
                     <Text style={styles.label}>Enter the description of your task</Text>
-                    <TextInput 
-                    style={styles.inputDescription}
-                    placeholder="Habit Description"
-                    value={habitText.description}
-                    onChangeText={(text)=>setHabitText(text,"description")}
-                    multiline={true}
-                    textAlignVertical="top"
-                    autoCorrect={false}
+                    <TextInput
+                        style={styles.inputDescription}
+                        placeholder="Habit Description"
+                        value={habitText.description}
+                        onChangeText={(text) => setHabitText(text, "description")}
+                        multiline={true}
+                        textAlignVertical="top"
+                        autoCorrect={false}
                     >
                     </TextInput>
 
@@ -69,7 +67,7 @@ export default function AddScreen() {
                     </Text>
                     <Picker
                         selectedValue={habitText.frequency}
-                        onValueChange={(itemValue) => setHabitText(itemValue,"frequency")}
+                        onValueChange={(itemValue) => setHabitText(itemValue, "frequency")}
                         style={styles.picker}
                     >
                         <Picker.Item label="Daily" value="Daily" />
@@ -81,7 +79,7 @@ export default function AddScreen() {
                     <Text style={styles.label}>Select the day of your task</Text>
                     <View style={styles.daysWrapper}>
                         {allDays.map((day) => (
-                            <View key={day+habitText.weekDay.join(",")} style={styles.checkBoxItem}>
+                            <View key={day + habitText.weekDay.join(",")} style={styles.checkBoxItem}>
                                 <CheckBox
                                     disabled={habitText.frequency === "Daily"}
                                     value={habitText.weekDay.includes(day)}
@@ -95,7 +93,7 @@ export default function AddScreen() {
                 </View>
                 <View style={styles.section}>
                     <Text style={styles.label}>Select Time of Day</Text>
-                    <RadioButton.Group onValueChange={(itemValue)=>setHabitText(itemValue,"timeRange")} value={habitText.timeRange}>
+                    <RadioButton.Group onValueChange={(itemValue) => setHabitText(itemValue, "timeRange")} value={habitText.timeRange}>
                         <View style={styles.timeWrapper}>
                             {timeOptions.map((timeRange) => (
                                 <View key={timeRange} style={styles.timeOption}>
@@ -109,7 +107,7 @@ export default function AddScreen() {
                 </View>
                 <View style={styles.section}>
                     <Text style={styles.label}>Is that habit good/bad</Text>
-                    <RadioButton.Group onValueChange={(itemValue)=>{setHabitText(itemValue,"behavior")}} value={habitText.behavior}>
+                    <RadioButton.Group onValueChange={(itemValue) => { setHabitText(itemValue, "behavior") }} value={habitText.behavior}>
                         <View style={styles.behaviorRow}>
                             <View style={[styles.behaviorOption, styles.good]}>
                                 <RadioButton value="Good" />
@@ -124,7 +122,7 @@ export default function AddScreen() {
 
                 </View>
                 <View style={styles.buttonContainer}>
-                    <Button title="Add Habit" onPress={ addHabit } />
+                    <Button title="Add Habit" onPress={addHabit} />
                 </View>
 
 
@@ -140,44 +138,44 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'rgba(165, 192, 237, 0.1)',
-        
+
     },
     headerSection: {
-    height: 120,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-    overflow: "hidden",
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-  },
-  background: {
-    width: "100%",
-    height: "100%",
-  },
-  overlay: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 40,
-    backgroundColor: "rgba(4, 97, 98, 0.3)",
-  },
-  header: {
-    marginTop: 1,
-  },
-  welcomeText: {
-    fontSize: 16,
-    color: "#FFFFFF",
-    fontWeight: "500",
-    opacity: 0.9,
-  },
-  userName: {
-    fontSize: 24,
-    color: "#FFFFFF",
-    fontWeight: "bold",
-    marginTop: 4,
-  },
+        height: 120,
+        borderBottomLeftRadius: 30,
+        borderBottomRightRadius: 30,
+        overflow: "hidden",
+        elevation: 5,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+    },
+    background: {
+        width: "100%",
+        height: "100%",
+    },
+    overlay: {
+        flex: 1,
+        paddingHorizontal: 24,
+        paddingTop: 40,
+        backgroundColor: "rgba(4, 97, 98, 0.3)",
+    },
+    header: {
+        marginTop: 1,
+    },
+    welcomeText: {
+        fontSize: 16,
+        color: "#FFFFFF",
+        fontWeight: "500",
+        opacity: 0.9,
+    },
+    userName: {
+        fontSize: 24,
+        color: "#FFFFFF",
+        fontWeight: "bold",
+        marginTop: 4,
+    },
     detailsContainer: {
         padding: 20,
         backgroundColor: '#f9fafb',

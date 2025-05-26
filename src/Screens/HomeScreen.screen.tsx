@@ -107,34 +107,36 @@ function HomeScreen({ navigation }: any) {
   }
 
   // Logout function
-const handleLogout = async () => {
-  console.log("🚪 Logout initiated")
-  
-  try {
-    // Clear user data from AsyncStorage
-    await AsyncStorage.removeItem("logged-in-user")
+  const handleLogout = async () => {
+    console.log("🚪 Logout initiated")
 
-    
-    // Clear auth store
-    const { clearCurrentUser,setIsLoggedIn } = useAuthStore.getState()
-    clearCurrentUser()
-    setIsLoggedIn(false)
-    
-    // Clear user text store if needed
-    const { clearUserText, } = useUserTextStore.getState()
-    clearUserText()
-   
-   
-    
-    // Close sidebar and navigate
-    closeSidebar()
-    console.log("✅ Closed sidebar")
-    
-  
-  } catch (error) {
-    console.log("❌ Logout error:", error)
+    try {
+      // Clear user data from AsyncStorage
+      await AsyncStorage.removeItem("logged-in-user")
+      await AsyncStorage.removeItem("my-habit")
+
+      // Clear auth store
+      const { clearCurrentUser, setIsLoggedIn } = useAuthStore.getState()
+      clearCurrentUser()
+      setIsLoggedIn(false)
+      const clearStore = useHabitStore(state=>state.clearStore)
+      clearStore()
+
+      // Clear user text store if needed
+      const { clearUserText, } = useUserTextStore.getState()
+      clearUserText()
+
+
+
+      // Close sidebar and navigate
+      closeSidebar()
+      console.log("✅ Closed sidebar")
+
+
+    } catch (error) {
+      console.log("❌ Logout error:", error)
+    }
   }
-}
 
   // Handle date selection from calendar
   const handleDateSelect = (dateString: string) => {
