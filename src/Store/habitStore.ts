@@ -205,9 +205,10 @@ export const useHabitStore = create<habitStoreType>((set, get) => ({
       calendar: calendar,
     }))
   },
-  clearStore: () => {
+  clearStore:async () => {
+     await AsyncStorage.removeItem("my-habit")
     set(() => ({
-      habits: [],
+      habits:[],
       progress: [],
       calendar: [],
     }))
