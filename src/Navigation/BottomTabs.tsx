@@ -43,17 +43,17 @@ export default function BottomTabs() {
                 )
             }} />
             <Tab.Screen name="Tasks" component={TaskScreen} options={{
-                tabBarIcon:({focused})=>(
+                tabBarIcon: ({ focused }) => (
                     <Image
-                    source={TaskIcon}
-                    style={{
-                        width: 30,
-                        height: 30,
-                        tintColor: focused ? 'tomato' : 'gray',
-                    }}
+                        source={TaskIcon}
+                        style={{
+                            width: 30,
+                            height: 30,
+                            tintColor: focused ? 'tomato' : 'gray',
+                        }}
                     />
                 )
-            }}/>
+            }} />
 
         </Tab.Navigator>
     );

@@ -42,7 +42,6 @@ function HomeScreen({ navigation }: any) {
         closeSidebar()
         return true
       }
-      BackHandler.exitApp()
       return true
     }
     const backHandler = BackHandler.addEventListener("hardwareBackPress", onBackPress)
@@ -117,13 +116,14 @@ const handleLogout = async () => {
 
     
     // Clear auth store
-    const { clearCurrentUser } = useAuthStore.getState()
+    const { clearCurrentUser,setIsLoggedIn } = useAuthStore.getState()
     clearCurrentUser()
-   
+    setIsLoggedIn(false)
     
     // Clear user text store if needed
-    const { clearUserText } = useUserTextStore.getState()
+    const { clearUserText, } = useUserTextStore.getState()
     clearUserText()
+   
    
     
     // Close sidebar and navigate

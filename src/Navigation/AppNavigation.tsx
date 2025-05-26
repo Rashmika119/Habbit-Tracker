@@ -4,8 +4,9 @@ import { useAuthStore } from "../Store/useAuthStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LoginScreen from "../Screens/LoginScreen.screen";
 import BottomTabs from "./BottomTabs";
-import RegisterScreen from "../Screens/Register.screen";
+
 import EditScreen from "../Screens/EditScreen.screen";
+import RegisterScreen from "../Screens/register.screen";
 
 const Stack = createNativeStackNavigator();
 
@@ -13,8 +14,9 @@ export default function AppNavigation() {
   const [loading, setLoading] = useState(true);
 
   const setCurrentUser = useAuthStore((state: any) => state.setCurrentUser);
-  const setIsLoggedIn = useAuthStore((state: any) => state.setIsLoggedIn); // ✅ FIXED
+  const setIsLoggedIn = useAuthStore((state: any) => state.setIsLoggedIn); 
   const isLoggedIn = useAuthStore((state: any) => state.isLoggedIn);
+
 
   useEffect(() => {
     const checkUser = async () => {
@@ -22,14 +24,14 @@ export default function AppNavigation() {
       if (userString) {
         const user = JSON.parse(userString);
         setCurrentUser(user);
-        setIsLoggedIn(true); 
+        setIsLoggedIn(true);
       }
       setLoading(false);
     };
     checkUser();
-  }, []);
+  }, [isLoggedIn]);
 
-  if (loading) return null; 
+  if (loading) return null;
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

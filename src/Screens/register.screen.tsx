@@ -3,14 +3,13 @@ import { Button, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, Vi
 import { useUserStore, useUserTextStore } from '../Store/userStore';
 import { useNavigation } from '@react-navigation/native';
 
-function RegisterScreen() {
+function RegisterScreen({navigation}:any) {
 
     const signUpUser = useUserStore((state) => state.signUpUser);
-    const navigation = useNavigation();
     const handleRegister = async () => {
         await signUpUser(navigation);
         // After registration, navigate to home (if needed)
-        navigation.navigate("BottomTabs" as never);  // navigate to BottomTabs
+        navigation.navigate("BottomTabs");  
     };
     return (
         <SafeAreaView style={styles.container}>
