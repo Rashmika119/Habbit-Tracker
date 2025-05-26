@@ -11,27 +11,43 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Modal,
+  Animated,
+  Dimensions,
+  Switch,
 } from "react-native"
 import { useEditStore, useHabitStore, useHabitTextStore } from "../Store/habitStore"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import HabitItem from "../Components/HabitItem"
-
 import { useAuthStore } from "../Store/useAuthStore"
 import Calendar from "../Components/Calender"
+import { useTheme } from "../hooks/useTheme"
+import { useUserStore, useUserTextStore } from "../Store/userStore"
+
+const { width: screenWidth } = Dimensions.get("window")
 
 function HomeScreen({ navigation }: any) {
   const [loaded, setLoaded] = useState(false)
   const [selectedDate, setSelectedDate] = useState(new Date().toDateString())
+  const [sidebarVisible, setSidebarVisible] = useState(false)
+  const [slideAnim] = useState(new Animated.Value(-screenWidth * 0.8))
+
+  // Use theme hook
+  const { theme, isDarkMode, toggleTheme, loadTheme } = useTheme()
 
   //exit the app functionality
   useEffect(() => {
     const onBackPress = () => {
+      if (sidebarVisible) {
+        closeSidebar()
+        return true
+      }
       BackHandler.exitApp()
       return true
     }
     const backHandler = BackHandler.addEventListener("hardwareBackPress", onBackPress)
     return () => backHandler.remove()
-  }, [])
+  }, [sidebarVisible])
 
   const { habitText, setHabitText } = useHabitTextStore((state) => state)
   const { habits, addHabit, deleteHabit, handleDone, setHabits, updateHabitsForToday, isHabitCompletedOnDate } =
@@ -59,12 +75,66 @@ function HomeScreen({ navigation }: any) {
     getHabits()
   }, [])
 
+  // Load theme on component mount
+  useEffect(() => {
+    loadTheme()
+  }, [])
+
   // Update habits for today when loaded
   useEffect(() => {
     if (loaded) {
       updateHabitsForToday()
     }
   }, [loaded])
+
+  // Sidebar animation functions
+  const openSidebar = () => {
+    setSidebarVisible(true)
+    Animated.timing(slideAnim, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start()
+  }
+
+  const closeSidebar = () => {
+    Animated.timing(slideAnim, {
+      toValue: -screenWidth * 0.8,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      setSidebarVisible(false)
+    })
+  }
+
+  // Logout function
+const handleLogout = async () => {
+  console.log("🚪 Logout initiated")
+  
+  try {
+    // Clear user data from AsyncStorage
+    await AsyncStorage.removeItem("logged-in-user")
+
+    
+    // Clear auth store
+    const { clearCurrentUser } = useAuthStore.getState()
+    clearCurrentUser()
+   
+    
+    // Clear user text store if needed
+    const { clearUserText } = useUserTextStore.getState()
+    clearUserText()
+   
+    
+    // Close sidebar and navigate
+    closeSidebar()
+    console.log("✅ Closed sidebar")
+    
+  
+  } catch (error) {
+    console.log("❌ Logout error:", error)
+  }
+}
 
   // Handle date selection from calendar
   const handleDateSelect = (dateString: string) => {
@@ -151,14 +221,82 @@ function HomeScreen({ navigation }: any) {
 
   const username = useAuthStore((state) => state.currentUser?.username)
 
+  // Create dynamic styles
+  const styles = createStyles(theme)
+
   return (
     <SafeAreaView style={styles.container}>
+      {/* Sidebar Modal */}
+      <Modal visible={sidebarVisible} transparent={true} animationType="none" onRequestClose={closeSidebar}>
+        <View style={styles.modalOverlay}>
+          <TouchableOpacity style={styles.modalBackground} activeOpacity={1} onPress={closeSidebar} />
+          <Animated.View style={[styles.sidebar, { transform: [{ translateX: slideAnim }] }]}>
+            {/* Profile Section */}
+            <View style={styles.profileSection}>
+              <View style={styles.profileAvatar}>
+                <Text style={styles.profileAvatarText}>{username?.charAt(0).toUpperCase() || "U"}</Text>
+              </View>
+              <Text style={styles.profileName}>{username?.toUpperCase() || "USER"}</Text>
+              <Text style={styles.profileEmail}>user@example.com</Text>
+            </View>
+
+            {/* Menu Items */}
+            <View style={styles.menuSection}>
+              {/* Theme Toggle */}
+              <View style={styles.menuItem}>
+                <Text style={styles.menuText}>{isDarkMode ? "🌙 Dark Mode" : "☀️ Light Mode"}</Text>
+                <Switch
+                  value={isDarkMode}
+                  onValueChange={toggleTheme}
+                  trackColor={{ false: "#767577", true: theme.button.primary }}
+                  thumbColor={isDarkMode ? "#f4f3f4" : "#f4f3f4"}
+                />
+              </View>
+
+              {/* Profile */}
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => {
+                  closeSidebar()
+                  // navigation.navigate("Profile")
+                }}
+              >
+                <Text style={styles.menuText}>👤 Profile</Text>
+              </TouchableOpacity>
+
+              {/* Settings */}
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => {
+                  closeSidebar()
+                  // navigation.navigate("Settings")
+                }}
+              >
+                <Text style={styles.menuText}>⚙️ Settings</Text>
+              </TouchableOpacity>
+
+              {/* Logout */}
+              <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
+                <Text style={styles.logoutText}>🚪 Logout</Text>
+              </TouchableOpacity>
+            </View>
+          </Animated.View>
+        </View>
+      </Modal>
+
       <View style={styles.headerSection}>
         <ImageBackground source={require("../Assets/background.jpg")} style={styles.background} resizeMode="cover">
           <View style={styles.overlay}>
             <View style={styles.header}>
-              <Text style={styles.welcomeText}>Good day</Text>
-              <Text style={styles.userName}>{username?.toUpperCase()}</Text>
+              {/* Menu Icon */}
+              <TouchableOpacity style={styles.menuIcon} onPress={openSidebar}>
+                <Text style={styles.menuIconText}>☰</Text>
+              </TouchableOpacity>
+
+              <View style={styles.headerContent}>
+                <Text style={styles.welcomeText}>Good day</Text>
+                <Text style={styles.userName}>{username?.toUpperCase()}</Text>
+              </View>
             </View>
             <View style={styles.dateContainer}>
               <Text style={styles.dateText}>{formattedDate}</Text>
@@ -182,17 +320,17 @@ function HomeScreen({ navigation }: any) {
           <View style={styles.progressContainer}>
             <View style={styles.progressBar}>
               <View style={styles.circle}>
-                <View style={[styles.fill, { height: `${goodHabitProgress}%`, backgroundColor: "#4ade80" }]} />
+                <View style={[styles.fill, { height: `${goodHabitProgress}%`, backgroundColor: theme.text.success }]} />
                 <Text style={styles.percentText}>{Math.round(goodHabitProgress)}%</Text>
               </View>
-              <Text>Good</Text>
+              <Text style={styles.progressLabel}>Good</Text>
             </View>
             <View style={styles.progressBar}>
               <View style={styles.circle}>
-                <View style={[styles.fill, { height: `${badHabitProgress}%`, backgroundColor: "#f87171" }]} />
+                <View style={[styles.fill, { height: `${badHabitProgress}%`, backgroundColor: theme.text.error }]} />
                 <Text style={styles.percentText}>{Math.round(badHabitProgress)}%</Text>
               </View>
-              <Text>Bad</Text>
+              <Text style={styles.progressLabel}>Bad</Text>
             </View>
           </View>
         </View>
@@ -241,205 +379,266 @@ function HomeScreen({ navigation }: any) {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "rgba(165, 192, 237, 0.1)",
-    flexDirection: "column",
-  },
-  headerSection: {
-    height: 150,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-    overflow: "hidden",
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-  },
-  background: {
-    width: "100%",
-    height: "100%",
-  },
-  overlay: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 40,
-    backgroundColor: "rgba(4, 97, 98, 0.3)",
-  },
-  header: {
-    marginTop: 8,
-  },
-  welcomeText: {
-    fontSize: 16,
-    color: "#FFFFFF",
-    fontWeight: "500",
-    opacity: 0.9,
-  },
-  userName: {
-    fontSize: 24,
-    color: "#FFFFFF",
-    fontWeight: "bold",
-    marginTop: 4,
-  },
-  dateContainer: {
-    marginTop: 8,
-    marginBottom: 10,
-  },
-  dateText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "500",
-    opacity: 0.9,
-  },
-  streakTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333333",
-    marginBottom: 10,
-    paddingLeft: 20,
-  },
-  streakContainer: {
-    paddingTop: 20,
-  },
-  calenderContainer: {
-    marginBottom: 0,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 20,
-  },
-  card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 15,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333333",
-    marginBottom: 10,
-  },
-  progressBar: {
-    alignItems: "center",
-    paddingVertical: 10,
-    width: "45%",
-  },
-  progressContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
-  },
-  circle: {
-    width: 90,
-    height: 90,
-    borderRadius: 60,
-    borderWidth: 10,
-    borderColor: "#EEEEEE",
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden",
-  },
-  fill: {
-    width: "100%",
-    position: "absolute",
-    bottom: 0,
-  },
-  percentText: {
-    position: "absolute",
-    fontWeight: "bold",
-    fontSize: 22,
-    color: "#333333",
-  },
-  tasksList: {
-    gap: 8,
-  },
-  icon: {
-    width: 30,
-    height: 30,
-    tintColor: "#666666",
-  },
-  iconLabel: {
-    fontSize: 12,
-    color: "#666666",
-    marginTop: 4,
-  },
-  habitsContainer: {
-    flex: 1,
-    paddingHorizontal: 20,
-    padding: 20,
-    borderRadius: 16,
-    backgroundColor: "#FFF",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginVertical: 12,
-    gap: 10,
-  },
-  filterButton: {
-    width: 120,
-    paddingVertical: 8,
-    alignItems: "center",
-    borderRadius: 25,
-    borderWidth: 1,
-    borderColor: "#5271FF",
-    backgroundColor: "#ffffff",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  selectedButton: {
-    backgroundColor: "#5271FF",
-    borderColor: "#5271FF",
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#5271FF",
-  },
-  selectedButtonText: {
-    color: "#ffffff",
-  },
-  addIconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: "#5271FF",
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 4,
-    shadowColor: "#5271FF",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.4,
-    shadowRadius: 3,
-    bottom: 10,
-  },
-  addIcon: {
-    width: 28,
-    height: 28,
-    tintColor: "#FFFFFF",
-  },
-  habitsList: {
-    paddingHorizontal: 10,
-    backgroundColor: "#F5F7FA",
-  },
-})
+const createStyles = (theme: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background.tertiary,
+      flexDirection: "column",
+    },
+    headerSection: {
+      height: 150,
+      borderBottomLeftRadius: 30,
+      borderBottomRightRadius: 30,
+      overflow: "hidden",
+      elevation: 5,
+      shadowColor: theme.shadow.primary,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 3,
+    },
+    background: {
+      width: "100%",
+      height: "100%",
+    },
+    overlay: {
+      flex: 1,
+      paddingHorizontal: 24,
+      paddingTop: 40,
+      backgroundColor: theme.background.overlay,
+    },
+    header: {
+      marginTop: 8,
+      flexDirection: "row",
+      alignItems: "flex-start",
+    },
+    menuIcon: {
+      padding: 8,
+      marginRight: 12,
+    },
+    menuIconText: {
+      fontSize: 24,
+      color: "#FFFFFF",
+      fontWeight: "bold",
+    },
+    headerContent: {
+      flex: 1,
+    },
+    welcomeText: {
+      fontSize: 16,
+      color: "#FFFFFF",
+      fontWeight: "500",
+      opacity: 0.9,
+    },
+    userName: {
+      fontSize: 24,
+      color: "#FFFFFF",
+      fontWeight: "bold",
+      marginTop: 4,
+    },
+    dateContainer: {
+      marginTop: 8,
+      marginBottom: 10,
+    },
+    dateText: {
+      color: "#FFFFFF",
+      fontSize: 14,
+      fontWeight: "500",
+      opacity: 0.9,
+    },
+    // Sidebar Styles
+    modalOverlay: {
+      flex: 1,
+      flexDirection: "row",
+    },
+    modalBackground: {
+      flex: 1,
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+    },
+    sidebar: {
+      width: screenWidth * 0.8,
+      height: "100%",
+      backgroundColor: theme.background.card,
+      paddingTop: 50,
+      elevation: 5,
+      shadowColor: theme.shadow.primary,
+      shadowOffset: { width: 2, height: 0 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+    },
+    profileSection: {
+      alignItems: "center",
+      paddingVertical: 30,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border.primary,
+      marginBottom: 20,
+    },
+    profileAvatar: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      backgroundColor: theme.button.primary,
+      justifyContent: "center",
+      alignItems: "center",
+      marginBottom: 15,
+    },
+    profileAvatarText: {
+      fontSize: 32,
+      color: theme.text.inverse,
+      fontWeight: "bold",
+    },
+    profileName: {
+      fontSize: 20,
+      fontWeight: "bold",
+      marginBottom: 5,
+      color: theme.text.primary,
+    },
+    profileEmail: {
+      fontSize: 14,
+      color: theme.text.secondary,
+    },
+    menuSection: {
+      flex: 1,
+      paddingHorizontal: 20,
+    },
+    menuItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingVertical: 15,
+      paddingHorizontal: 15,
+      marginBottom: 5,
+      borderRadius: 10,
+    },
+    menuText: {
+      fontSize: 16,
+      fontWeight: "500",
+      color: theme.text.primary,
+    },
+    logoutText: {
+      fontSize: 16,
+      fontWeight: "500",
+      color: theme.text.error,
+    },
+    streakTitle: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: theme.text.primary,
+      marginBottom: 10,
+      paddingLeft: 20,
+    },
+    streakContainer: {
+      paddingTop: 20,
+    },
+    calenderContainer: {
+      marginBottom: 0,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    content: {
+      flex: 1,
+      paddingHorizontal: 20,
+      paddingTop: 20,
+    },
+    card: {
+      backgroundColor: theme.background.card,
+      borderRadius: 16,
+      padding: 20,
+      marginBottom: 15,
+      elevation: 2,
+      shadowColor: theme.shadow.primary,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.1,
+      shadowRadius: 2,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: theme.text.primary,
+      marginBottom: 10,
+    },
+    progressBar: {
+      alignItems: "center",
+      paddingVertical: 10,
+      width: "45%",
+    },
+    progressContainer: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      width: "100%",
+    },
+    circle: {
+      width: 90,
+      height: 90,
+      borderRadius: 60,
+      borderWidth: 10,
+      borderColor: theme.border.secondary,
+      justifyContent: "center",
+      alignItems: "center",
+      overflow: "hidden",
+    },
+    fill: {
+      width: "100%",
+      position: "absolute",
+      bottom: 0,
+    },
+    percentText: {
+      position: "absolute",
+      fontWeight: "bold",
+      fontSize: 22,
+      color: theme.text.primary,
+    },
+    progressLabel: {
+      color: theme.text.primary,
+      marginTop: 8,
+    },
+    habitsContainer: {
+      flex: 1,
+      paddingHorizontal: 20,
+      padding: 20,
+      borderRadius: 16,
+      backgroundColor: theme.background.card,
+      shadowColor: theme.shadow.primary,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.1,
+      shadowRadius: 2,
+    },
+    buttonRow: {
+      flexDirection: "row",
+      justifyContent: "center",
+      marginVertical: 12,
+      gap: 10,
+    },
+    filterButton: {
+      width: 120,
+      paddingVertical: 8,
+      alignItems: "center",
+      borderRadius: 25,
+      borderWidth: 1,
+      borderColor: theme.button.primary,
+      backgroundColor: theme.background.card,
+      shadowColor: theme.shadow.primary,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    selectedButton: {
+      backgroundColor: theme.button.primary,
+      borderColor: theme.button.primary,
+    },
+    buttonText: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: theme.button.primary,
+    },
+    selectedButtonText: {
+      color: theme.text.inverse,
+    },
+    habitsList: {
+      paddingHorizontal: 10,
+      backgroundColor: theme.background.secondary,
+    },
+  })
 
 export default HomeScreen
