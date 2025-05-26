@@ -7,6 +7,8 @@ import BottomTabs from "./BottomTabs";
 
 import EditScreen from "../Screens/EditScreen.screen";
 import RegisterScreen from "../Screens/register.screen";
+import ProfileScreen from "../Screens/ProfileScreen.screen";
+import OpeningScreen from "../Screens/OpeningScreen.screen";
 
 const Stack = createNativeStackNavigator();
 
@@ -35,10 +37,12 @@ export default function AppNavigation() {
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="loading" component={OpeningScreen} />
       {isLoggedIn ? (
         <>
           <Stack.Screen name="BottomTabs" component={BottomTabs} />
           <Stack.Screen name="Edit" component={EditScreen} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
         </>
       ) : (
         <>

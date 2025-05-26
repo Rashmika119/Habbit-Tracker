@@ -5,18 +5,31 @@ import TaskScreen from "../Screens/TaskScreen.screen";
 
 import React from "react";
 import { Image, StyleSheet } from "react-native";
+import { useThemeStore } from "../Store/themeStore";
 
-// Import your home icon image (adjust the path as needed)
+
 import HomeIcon from '../Assets/home.png';
 import AddIcon from '../Assets/add.png';
 import TaskIcon from '../Assets/task.png';
-
+import { darkTheme, lightTheme } from "../Themes/colors";
 
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabs() {
+    const { isDarkMode } = useThemeStore();
+    const theme = isDarkMode ? darkTheme : lightTheme;
+    const styles = createStyles(theme);
+
     return (
-        <Tab.Navigator screenOptions={{ headerShown: false, tabBarShowLabel: false, tabBarStyle: styles.tabBar }}>
+        
+
+        <Tab.Navigator 
+            screenOptions={{ 
+                headerShown: false, 
+                tabBarShowLabel: false, 
+                tabBarStyle: styles.tabBar 
+            }}
+        >
             <Tab.Screen name="Home" component={HomeScreen} options={{
                 tabBarIcon: ({ focused }) => (
                     <Image
@@ -24,8 +37,7 @@ export default function BottomTabs() {
                         style={{
                             width: 30,
                             height: 30,
-                            tintColor: focused ? 'tomato' : 'gray',
-
+                            tintColor: focused ? theme.button.primary : theme.text.secondary,
                         }}
                     />
                 ),
@@ -37,7 +49,7 @@ export default function BottomTabs() {
                         style={{
                             width: 30,
                             height: 30,
-                            tintColor: focused ? 'tomato' : 'gray',
+                            tintColor: focused ? theme.button.primary : theme.text.secondary,
                         }}
                     />
                 )
@@ -49,28 +61,29 @@ export default function BottomTabs() {
                         style={{
                             width: 30,
                             height: 30,
-                            tintColor: focused ? 'tomato' : 'gray',
+                            tintColor: focused ? theme.button.primary : theme.text.secondary,
                         }}
                     />
                 )
             }} />
-
         </Tab.Navigator>
     );
 }
-const styles = StyleSheet.create({
+
+const createStyles = (theme: any) => StyleSheet.create({
     tabBar: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.background.card,
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
         borderTopLeftRadius: 24,
         borderTopRightRadius: 24,
         elevation: 8,
-        shadowColor: '#000',
+        shadowColor: theme.shadow.primary,
         shadowOffset: { width: 0, height: -3 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
+        borderTopWidth: 1,
+        borderTopColor: theme.border.primary,
     },
-
 });
