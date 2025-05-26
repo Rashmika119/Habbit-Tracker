@@ -124,27 +124,31 @@ export default function EditScreen({ navigation }: any) {
 
     return (
         <View style={styles.container}>
-            <ImageBackground
-                source={require('../Assets/headerbackground.png')}
-                style={styles.header}
-                resizeMode="cover"
-            >
-                <TouchableOpacity
-                    style={styles.backButtonContainer}
-                    onPress={() => {
-                        clearEditId();
-                        navigation.goBack();
-                    }}
-                >
-                    <Image source={require("../Assets/back.png")} style={styles.backButton} />
-                </TouchableOpacity>
-                <Text style={styles.headerText}>Edit Your Tasks</Text>
-            </ImageBackground>
-            
+        
+            <View style={styles.headerSection}>
+                <ImageBackground source={require("../Assets/edit.png")} style={styles.background} resizeMode="cover">
+                    <View style={styles.overlay}>
+                        <TouchableOpacity
+                            style={styles.backButtonContainer}
+                            onPress={() => {
+                                clearEditId();
+                                navigation.goBack();
+                            }}
+                        >
+                            <Image source={require("../Assets/back.png")} style={styles.backButton} />
+                        </TouchableOpacity>
+                        <View style={styles.header}>
+                            <Text style={styles.welcomeText}>Make you mistakes,restart journey</Text>
+                            <Text style={styles.userName}>Edit Your Tasks</Text>
+                        </View>
+                    </View>
+                </ImageBackground>
+            </View>
+
             <ScrollView style={styles.detailsContainer}>
                 <View style={styles.section}>
                     <Text style={styles.label}>Enter the title of your task</Text>
-                    <TextInput 
+                    <TextInput
                         style={styles.inputTitle}
                         value={editedHabit.task}
                         onChangeText={(text) => setEditedHabit({ ...editedHabit, task: text })}
@@ -164,7 +168,7 @@ export default function EditScreen({ navigation }: any) {
                         autoCorrect={false}
                     />
                 </View>
-                
+
                 <View style={styles.section}>
                     <Text style={styles.label}>
                         Select the frequency of your task
@@ -177,8 +181,8 @@ export default function EditScreen({ navigation }: any) {
                         <Picker.Item label="Daily" value="Daily" />
                         <Picker.Item label="Weekly" value="Weekly" />
                     </Picker>
-                </View>   
-                
+                </View>
+
                 <View style={styles.section}>
                     <Text style={styles.label}>Select the day of your task</Text>
                     <View style={styles.daysWrapper}>
@@ -199,11 +203,11 @@ export default function EditScreen({ navigation }: any) {
                         ))}
                     </View>
                 </View>
-                
+
                 <View style={styles.section}>
                     <Text style={styles.label}>Select Time of Day</Text>
-                    <RadioButton.Group 
-                        onValueChange={(value) => setEditedHabit({...editedHabit, timeRange: value})} 
+                    <RadioButton.Group
+                        onValueChange={(value) => setEditedHabit({ ...editedHabit, timeRange: value })}
                         value={editedHabit.timeRange}
                     >
                         <View style={styles.timeWrapper}>
@@ -216,11 +220,11 @@ export default function EditScreen({ navigation }: any) {
                         </View>
                     </RadioButton.Group>
                 </View>
-                
+
                 <View style={styles.section}>
                     <Text style={styles.label}>Is that habit good/bad</Text>
-                    <RadioButton.Group 
-                        onValueChange={(value) => setEditedHabit({ ...editedHabit, behavior: value })} 
+                    <RadioButton.Group
+                        onValueChange={(value) => setEditedHabit({ ...editedHabit, behavior: value })}
                         value={editedHabit.behavior}
                     >
                         <View style={styles.behaviorRow}>
@@ -235,7 +239,7 @@ export default function EditScreen({ navigation }: any) {
                         </View>
                     </RadioButton.Group>
                 </View>
-                
+
                 <View style={styles.buttonsContainer}>
                     <TouchableOpacity style={styles.editButton} onPress={editConfirm}>
                         <Text style={styles.buttonText}>Save Changes</Text>
@@ -254,21 +258,44 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'rgba(165, 192, 237, 0.1)',
     },
+    headerSection: {
+        height: 120,
+        borderBottomLeftRadius: 30,
+        borderBottomRightRadius: 30,
+        overflow: "hidden",
+        elevation: 5,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+    },
+    background: {
+        width: "100%",
+        height: "100%",
+    },
+    overlay: {
+        flex: 1,
+        paddingHorizontal: 24,
+        paddingTop: 40,
+        backgroundColor: "rgba(4, 97, 98, 0.3)",
+    },
     header: {
-        
-        backgroundColor: 'rgba(4, 96, 98, 0.52)',
-        paddingVertical: 20,
-        paddingHorizontal: 20,
-        alignItems: 'center',
-        borderBottomWidth: 1,
-        borderBottomColor: '#ddd',
-        marginBottom: 15,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        position: 'relative',
+        marginTop: 1,
+    },
+    welcomeText: {
+        fontSize: 16,
+        color: "#FFFFFF",
+        fontWeight: "500",
+        opacity: 0.9,
+    },
+    userName: {
+        fontSize: 24,
+        color: "#FFFFFF",
+        fontWeight: "bold",
+        marginTop: 4,
     },
     backButtonContainer: {
-        
+
         position: 'absolute',
         left: 20,
         top: 20,
@@ -279,11 +306,7 @@ const styles = StyleSheet.create({
         height: 24,
         tintColor: '#333',
     },
-    headerText: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        color: '#333',
-    },
+
     detailsContainer: {
         padding: 20,
         backgroundColor: '#f9fafb',

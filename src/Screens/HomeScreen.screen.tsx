@@ -230,15 +230,7 @@ function HomeScreen({ navigation }: any) {
         <View style={styles.modalOverlay}>
           <TouchableOpacity style={styles.modalBackground} activeOpacity={1} onPress={closeSidebar} />
           <Animated.View style={[styles.sidebar, { transform: [{ translateX: slideAnim }] }]}>
-            {/* Profile Section */}
-            <View style={styles.profileSection}>
-              <View style={styles.profileAvatar}>
-                <Text style={styles.profileAvatarText}>{username?.charAt(0).toUpperCase() || "U"}</Text>
-              </View>
-              <Text style={styles.profileName}>{username?.toUpperCase() || "USER"}</Text>
-              <Text style={styles.profileEmail}>user@example.com</Text>
-            </View>
-
+          
             {/* Menu Items */}
             <View style={styles.menuSection}>
               {/* Theme Toggle */}
@@ -261,17 +253,6 @@ function HomeScreen({ navigation }: any) {
                 }}
               >
                 <Text style={styles.menuText}>👤 Profile</Text>
-              </TouchableOpacity>
-
-              {/* Settings */}
-              <TouchableOpacity
-                style={styles.menuItem}
-                onPress={() => {
-                  closeSidebar()
-                  // navigation.navigate("Settings")
-                }}
-              >
-                <Text style={styles.menuText}>⚙️ Settings</Text>
               </TouchableOpacity>
 
               {/* Logout */}
@@ -407,7 +388,7 @@ const createStyles = (theme: any) =>
       backgroundColor: theme.background.overlay,
     },
     header: {
-      marginTop: 8,
+      
       flexDirection: "row",
       alignItems: "flex-start",
     },
@@ -438,6 +419,7 @@ const createStyles = (theme: any) =>
     dateContainer: {
       marginTop: 8,
       marginBottom: 10,
+      paddingHorizontal: 48,
     },
     dateText: {
       color: "#FFFFFF",
@@ -467,35 +449,12 @@ const createStyles = (theme: any) =>
     },
     profileSection: {
       alignItems: "center",
-      paddingVertical: 30,
+      paddingVertical: 20,
       borderBottomWidth: 1,
       borderBottomColor: theme.border.primary,
       marginBottom: 20,
     },
-    profileAvatar: {
-      width: 80,
-      height: 80,
-      borderRadius: 40,
-      backgroundColor: theme.button.primary,
-      justifyContent: "center",
-      alignItems: "center",
-      marginBottom: 15,
-    },
-    profileAvatarText: {
-      fontSize: 32,
-      color: theme.text.inverse,
-      fontWeight: "bold",
-    },
-    profileName: {
-      fontSize: 20,
-      fontWeight: "bold",
-      marginBottom: 5,
-      color: theme.text.primary,
-    },
-    profileEmail: {
-      fontSize: 14,
-      color: theme.text.secondary,
-    },
+
     menuSection: {
       flex: 1,
       paddingHorizontal: 20,
@@ -523,7 +482,7 @@ const createStyles = (theme: any) =>
       fontSize: 18,
       fontWeight: "bold",
       color: theme.text.primary,
-      marginBottom: 10,
+      marginBottom: 8,
       paddingLeft: 20,
     },
     streakContainer: {
@@ -537,7 +496,7 @@ const createStyles = (theme: any) =>
     content: {
       flex: 1,
       paddingHorizontal: 20,
-      paddingTop: 20,
+      paddingTop: 8,
     },
     card: {
       backgroundColor: theme.background.card,
