@@ -19,7 +19,7 @@ export type userInputType={
 export type userStoreType={
   users: UserType[];
   signUpUser: (navigation: any) => Promise<void>;
-  signInUser: (navigation: any,userData:userInputType) => Promise<void>;
+  signInUser: (userData:userInputType) => Promise<void>;
   logoutUser: (navigation: any) => Promise<void>;
   setHabits: (users: UserType[]) => void;
 }
