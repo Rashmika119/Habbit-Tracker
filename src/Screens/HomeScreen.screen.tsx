@@ -248,7 +248,7 @@ function HomeScreen({ navigation }: any) {
               <TouchableOpacity
                 style={styles.menuItem}
                 onPress={() => {
-                  closeSidebar()
+                  navigation.navigate("Profile")
                   // navigation.navigate("Profile")
                 }}
               >
@@ -501,8 +501,8 @@ const createStyles = (theme: any) =>
     card: {
       backgroundColor: theme.background.card,
       borderRadius: 16,
-      padding: 20,
-      marginBottom: 15,
+      padding: 15,
+      marginBottom: 10,
       elevation: 2,
       shadowColor: theme.shadow.primary,
       shadowOffset: { width: 0, height: 1 },
@@ -513,7 +513,7 @@ const createStyles = (theme: any) =>
       fontSize: 18,
       fontWeight: "bold",
       color: theme.text.primary,
-      marginBottom: 10,
+      marginBottom: 8,
     },
     progressBar: {
       alignItems: "center",
@@ -568,8 +568,8 @@ const createStyles = (theme: any) =>
       gap: 10,
     },
     filterButton: {
-      width: 120,
-      paddingVertical: 8,
+      width: 150,
+      paddingVertical: 10,
       alignItems: "center",
       borderRadius: 25,
       borderWidth: 1,

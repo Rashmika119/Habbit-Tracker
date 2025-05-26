@@ -13,6 +13,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useEditStore, useHabitStore } from "../Store/habitStore"
 import HabitItem from "../Components/HabitItem"
 import { useFocusEffect } from "@react-navigation/native"
+import { useThemeStore } from "../Store/themeStore"
+import { darkTheme, lightTheme } from "../Themes/colors"
 
 // Helper function to get the date for a specific weekday
 const getDateForWeekDay = (weekDayName: string) => {
@@ -59,6 +61,10 @@ function TaskScreen({ navigation }: any) {
 
   const { habits, setHabits, isHabitCompletedOnDate } = useHabitStore((state) => state)
   const { setEditId } = useEditStore()
+
+   const { isDarkMode } = useThemeStore()
+  const theme = isDarkMode ? darkTheme : lightTheme
+  const styles = createStyles(theme)
 
   // Week days for filtering
   const weekDays = [
@@ -204,9 +210,8 @@ function TaskScreen({ navigation }: any) {
     return selectedPeriod === "Daily" ? todayString : getDateForWeekDay(selectedWeekDay);
   }
 
-  return (
+ return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
       <View style={styles.headerSection}>
         <ImageBackground source={require("../Assets/taskBackground.png")} style={styles.background} resizeMode="cover">
           <View style={styles.overlay}>
@@ -219,21 +224,20 @@ function TaskScreen({ navigation }: any) {
       </View>
 
       <ScrollView style={styles.content}>
-        {/* MOVED UP: Weekly Progress Section */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>This Week's Progress</Text>
           <Text style={styles.weekSubtitle}>Resets on every Monday</Text>
           <View style={styles.progressContainer}>
             <View style={styles.progressBar}>
               <View style={styles.circle}>
-                <View style={[styles.fill, { height: `${goodWeeklyProgress}%`, backgroundColor: "#4ade80" }]} />
+                <View style={[styles.fill, { height: `${goodWeeklyProgress}%`, backgroundColor: theme.progress.good }]} />
                 <Text style={styles.percentText}>{Math.round(goodWeeklyProgress)}%</Text>
               </View>
               <Text style={styles.progressLabel}>Good Habits</Text>
             </View>
             <View style={styles.progressBar}>
               <View style={styles.circle}>
-                <View style={[styles.fill, { height: `${badWeeklyProgress}%`, backgroundColor: "#f87171" }]} />
+                <View style={[styles.fill, { height: `${badWeeklyProgress}%`, backgroundColor: theme.progress.bad }]} />
                 <Text style={styles.percentText}>{Math.round(badWeeklyProgress)}%</Text>
               </View>
               <Text style={styles.progressLabel}>Bad Habits</Text>
@@ -241,7 +245,6 @@ function TaskScreen({ navigation }: any) {
           </View>
         </View>
 
-        {/* MOVED DOWN: Period Toggle Buttons */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Filter Habits</Text>
           <View style={styles.buttonRow}>
@@ -261,7 +264,6 @@ function TaskScreen({ navigation }: any) {
           </View>
         </View>
 
-        {/* Weekly Day Filter (only show for weekly) */}
         {selectedPeriod === "Weekly" && (
           <View style={styles.card}>
             <Text style={styles.sectionTitle}>Select Day</Text>
@@ -281,7 +283,6 @@ function TaskScreen({ navigation }: any) {
           </View>
         )}
 
-        {/* Behavior Filter Buttons */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Habit Type</Text>
           <View style={styles.buttonRow}>
@@ -301,7 +302,6 @@ function TaskScreen({ navigation }: any) {
           </View>
         </View>
 
-        {/* Habits List */}
         <View style={styles.habitsContainer}>
           <Text style={styles.sectionTitle}>
             {selectedPeriod} {selectedBehavior} Habits
@@ -338,10 +338,10 @@ function TaskScreen({ navigation }: any) {
   )
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "rgba(165, 192, 237, 0.1)",
+    backgroundColor: theme.background.tertiary,
   },
   headerSection: {
     height: 120,
@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 30,
     overflow: "hidden",
     elevation: 5,
-    shadowColor: "#000",
+    shadowColor: theme.shadow.primary,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 24,
     paddingTop: 40,
-    backgroundColor: "rgba(4, 97, 98, 0.3)",
+    backgroundColor: theme.background.overlay,
   },
   header: {
     marginTop: 1,
@@ -385,25 +385,27 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: theme.background.card,
     borderRadius: 16,
     padding: 18,
     marginBottom: 15,
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: theme.shadow.primary,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
+    borderWidth: 1,
+    borderColor: theme.border.primary,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#333333",
+    color: theme.text.primary,
     marginBottom: 15,
   },
   weekSubtitle: {
     fontSize: 14,
-    color: "#666666",
+    color: theme.text.secondary,
     marginBottom: 15,
     fontStyle: "italic",
   },
@@ -418,8 +420,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 25,
     borderWidth: 1,
-    borderColor: "#5271FF",
-    backgroundColor: "#ffffff",
+    borderColor: theme.button.primary,
+    backgroundColor: theme.background.card,
     elevation: 2,
   },
   filterButton: {
@@ -428,21 +430,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 25,
     borderWidth: 1,
-    borderColor: "#5271FF",
-    backgroundColor: "#ffffff",
+    borderColor: theme.button.primary,
+    backgroundColor: theme.background.card,
     elevation: 2,
   },
   selectedButton: {
-    backgroundColor: "#5271FF",
-    borderColor: "#5271FF",
+    backgroundColor: theme.button.primary,
+    borderColor: theme.button.primary,
   },
   buttonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#5271FF",
+    color: theme.button.primary,
   },
   selectedButtonText: {
-    color: "#ffffff",
+    color: theme.text.inverse,
   },
   progressContainer: {
     flexDirection: "row",
@@ -459,7 +461,7 @@ const styles = StyleSheet.create({
     height: 90,
     borderRadius: 50,
     borderWidth: 8,
-    borderColor: "#EEEEEE",
+    borderColor: theme.progress.background,
     justifyContent: "center",
     alignItems: "center",
     overflow: "hidden",
@@ -473,13 +475,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     fontWeight: "bold",
     fontSize: 18,
-    color: "#333333",
+    color: theme.text.primary,
   },
   progressLabel: {
     marginTop: 10,
     fontSize: 16,
     fontWeight: "600",
-    color: "#333333",
+    color: theme.text.primary,
   },
   weekDayContainer: {
     flexDirection: "row",
@@ -489,34 +491,36 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#5271FF",
-    backgroundColor: "#ffffff",
+    borderColor: theme.button.primary,
+    backgroundColor: theme.background.card,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 8,
     elevation: 1,
   },
   selectedWeekDay: {
-    backgroundColor: "#5271FF",
+    backgroundColor: theme.button.primary,
   },
   weekDayText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#5271FF",
+    color: theme.button.primary,
   },
   selectedWeekDayText: {
-    color: "#ffffff",
+    color: theme.text.inverse,
   },
   habitsContainer: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: theme.background.card,
     borderRadius: 16,
     padding: 20,
     marginBottom: 20,
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: theme.shadow.primary,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
+    borderWidth: 1,
+    borderColor: theme.border.primary,
   },
   habitsList: {
     maxHeight: 400,
@@ -527,7 +531,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: "#666666",
+    color: theme.text.secondary,
     textAlign: "center",
   },
 })

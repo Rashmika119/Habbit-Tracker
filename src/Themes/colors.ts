@@ -1,87 +1,90 @@
+// Clean and modern theme configuration
 export const lightTheme = {
-  // Background colors
   background: {
-    primary: "#FFFFFF",
-    secondary: "#F5F7FA",
-    tertiary: "rgba(165, 192, 237, 0.1)",
-    card: "#FFFFFF",
-    overlay: "rgba(4, 97, 98, 0.3)",
+    primary: '#FFFFFF',
+    secondary: '#F8FAFC',
+    tertiary: '#F1F5F9',
+    card: '#FFFFFF',
+    overlay: 'rgba(15, 23, 42, 0.1)',
   },
-
-  // Text colors
   text: {
-    primary: "#333333",
-    secondary: "#666666",
-    tertiary: "#999999",
-    inverse: "#FFFFFF",
-    accent: "#5271FF",
-    success: "#4ade80",
-    error: "#f87171",
-    warning: "#fbbf24",
+    primary: '#0F172A',
+    secondary: '#64748B',
+    inverse: '#FFFFFF',
+    success: '#10B981',
+    error: '#EF4444',
+    disabled: '#94A3B8',
   },
-
-  // Border colors
-  border: {
-    primary: "#E5E5E5",
-    secondary: "#EEEEEE",
-    accent: "#5271FF",
-  },
-
-  // Button colors
   button: {
-    primary: "#5271FF",
-    secondary: "#FFFFFF",
-    success: "#4ade80",
-    error: "#f87171",
+    primary: '#3B82F6',
+    secondary: '#E2E8F0',
+    success: '#10B981',
+    danger: '#EF4444',
   },
-
-  // Shadow colors
+  border: {
+    primary: '#E2E8F0',
+    secondary: '#CBD5E1',
+    focus: '#3B82F6',
+  },
   shadow: {
-    primary: "#000000",
+    primary: '#000000',
   },
-}
+  input: {
+    background: '#FFFFFF',
+    border: '#E2E8F0',
+    placeholder: '#94A3B8',
+  },
+  progress: {
+    good: '#10B981',
+    bad: '#EF4444',
+    background: '#F1F5F9',
+  },
+  isDarkMode: false,
+};
 
 export const darkTheme = {
-  // Background colors
   background: {
-    primary: "#1a1a1a",
-    secondary: "#2a2a2a",
-    tertiary: "#0f0f0f",
-    card: "#2a2a2a",
-    overlay: "rgba(4, 97, 98, 0.5)",
+    primary: '#0F172A',
+    secondary: '#1E293B',
+    tertiary: '#334155',
+    card: '#1E293B',
+    overlay: 'rgba(0, 0, 0, 0.5)',
   },
-
-  // Text colors
   text: {
-    primary: "#FFFFFF",
-    secondary: "#CCCCCC",
-    tertiary: "#999999",
-    inverse: "#000000",
-    accent: "#6366f1",
-    success: "#4ade80",
-    error: "#f87171",
-    warning: "#fbbf24",
+    primary: '#F8FAFC',
+    secondary: '#94A3B8',
+    inverse: '#0F172A',
+    success: '#10B981',
+    error: '#EF4444',
+    disabled: '#64748B',
   },
-
-  // Border colors
-  border: {
-    primary: "#404040",
-    secondary: "#333333",
-    accent: "#6366f1",
-  },
-
-  // Button colors
   button: {
-    primary: "#6366f1",
-    secondary: "#2a2a2a",
-    success: "#4ade80",
-    error: "#f87171",
+    primary: '#3B82F6',
+    secondary: '#334155',
+    success: '#10B981',
+    danger: '#EF4444',
   },
-
-  // Shadow colors
+  border: {
+    primary: '#334155',
+    secondary: '#475569',
+    focus: '#3B82F6',
+  },
   shadow: {
-    primary: "#000000",
+    primary: '#000000',
   },
-}
+  input: {
+    background: '#334155',
+    border: '#475569',
+    placeholder: '#94A3B8',
+  },
+  progress: {
+    good: '#10B981',
+    bad: '#EF4444',
+    background: '#334155',
+  },
+  isDarkMode: true,
+};
 
-export type Theme = typeof lightTheme
+export const getTheme = (isDarkMode: boolean) => {
+  return isDarkMode ? darkTheme : lightTheme;
+};
