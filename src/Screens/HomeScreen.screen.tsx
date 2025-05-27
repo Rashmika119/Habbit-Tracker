@@ -199,31 +199,31 @@ function HomeScreen({ navigation }: any) {
   // Check for progress completion and show modal (only for today, not historical dates)
   useEffect(() => {
     const isToday = selectedDate === new Date().toDateString()
-    
+
     if (isToday && loaded) {
       // Check Good Habits Progress
       if (
-        totalTodayGoodHabits > 0 && 
-        goodHabitProgress === 100 && 
-        previousGoodProgress < 100 && 
-        previousGoodProgress >= 0 
+        totalTodayGoodHabits > 0 &&
+        goodHabitProgress === 100 &&
+        previousGoodProgress < 100 &&
+        previousGoodProgress >= 0
       ) {
         setProgressModalType('Good')
         setShowProgressModal(true)
-        
+
       }
-      
+
       // Check Bad Habits Progress
       if (
-        totalTodayBadHabits > 0 && 
-        badHabitProgress === 100 && 
-        previousBadProgress < 100 && 
-        previousBadProgress >= 0 
+        totalTodayBadHabits > 0 &&
+        badHabitProgress === 100 &&
+        previousBadProgress < 100 &&
+        previousBadProgress >= 0
       ) {
         setProgressModalType('Bad')
         setShowProgressModal(true)
       }
-      
+
       // Update previous progress for next comparison
       setPreviousGoodProgress(goodHabitProgress)
       setPreviousBadProgress(badHabitProgress)
@@ -289,7 +289,7 @@ function HomeScreen({ navigation }: any) {
         <View style={styles.modalOverlay}>
           <TouchableOpacity style={styles.modalBackground} activeOpacity={1} onPress={closeSidebar} />
           <Animated.View style={[styles.sidebar, { transform: [{ translateX: slideAnim }] }]}>
-          
+
             {/* Menu Items */}
             <View style={styles.menuSection}>
               {/* Theme Toggle */}
@@ -343,77 +343,78 @@ function HomeScreen({ navigation }: any) {
           </View>
         </ImageBackground>
       </View>
-
-      <View style={styles.streakContainer}>
-        <Text style={styles.streakTitle}>Your good habits streak</Text>
-        <View style={styles.calenderContainer}>
-          <Calendar onDateSelect={handleDateSelect} />
-        </View>
-      </View>
-
-      <View style={styles.content}>
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>
-            {selectedDate === new Date().toDateString() ? "Today" : "Selected Day"} Progress
-          </Text>
-          <View style={styles.progressContainer}>
-            <View style={styles.progressBar}>
-              <View style={styles.circle}>
-                <View style={[styles.fill, { height: `${goodHabitProgress}%`, backgroundColor: theme.text.success }]} />
-                <Text style={styles.percentText}>{Math.round(goodHabitProgress)}%</Text>
-              </View>
-              <Text style={styles.progressLabel}>Good</Text>
-            </View>
-            <View style={styles.progressBar}>
-              <View style={styles.circle}>
-                <View style={[styles.fill, { height: `${badHabitProgress}%`, backgroundColor: theme.text.error }]} />
-                <Text style={styles.percentText}>{Math.round(badHabitProgress)}%</Text>
-              </View>
-              <Text style={styles.progressLabel}>Bad</Text>
-            </View>
+      <ScrollView>
+        <View style={styles.streakContainer}>
+          <Text style={styles.streakTitle}>Your good habits streak</Text>
+          <View style={styles.calenderContainer}>
+            <Calendar onDateSelect={handleDateSelect} />
           </View>
         </View>
 
-        <View style={styles.habitsContainer}>
-          <Text style={styles.sectionTitle}>
-            {selectedDate === new Date().toDateString() ? "Today" : weekDay} habits
-          </Text>
-
-          {/*Filter buttons*/}
-          <View style={styles.buttonRow}>
-            <TouchableOpacity
-              style={[styles.filterButton, selectedBehavior === "Good" && styles.selectedButton]}
-              onPress={() => setSelectedBehavior("Good")}
-            >
-              <Text style={[styles.buttonText, selectedBehavior === "Good" && styles.selectedButtonText]}>Good</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.filterButton, selectedBehavior === "Bad" && styles.selectedButton]}
-              onPress={() => setSelectedBehavior("Bad")}
-            >
-              <Text style={[styles.buttonText, selectedBehavior === "Bad" && styles.selectedButtonText]}>Bad</Text>
-            </TouchableOpacity>
+        <View style={styles.content}>
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>
+              {selectedDate === new Date().toDateString() ? "Today" : "Selected Day"} Progress
+            </Text>
+            <View style={styles.progressContainer}>
+              <View style={styles.progressBar}>
+                <View style={styles.circle}>
+                  <View style={[styles.fill, { height: `${goodHabitProgress}%`, backgroundColor: theme.text.success }]} />
+                  <Text style={styles.percentText}>{Math.round(goodHabitProgress)}%</Text>
+                </View>
+                <Text style={styles.progressLabel}>Good</Text>
+              </View>
+              <View style={styles.progressBar}>
+                <View style={styles.circle}>
+                  <View style={[styles.fill, { height: `${badHabitProgress}%`, backgroundColor: theme.text.error }]} />
+                  <Text style={styles.percentText}>{Math.round(badHabitProgress)}%</Text>
+                </View>
+                <Text style={styles.progressLabel}>Bad</Text>
+              </View>
+            </View>
           </View>
 
-          <ScrollView style={styles.habitsList}>
-            <FlatList
-              data={filteredHabits}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    setEditId(item.id)
-                    navigation.navigate("Edit")
-                  }}
-                >
-                  <HabitItem habit={item} selectedDate={selectedDate} />
-                </TouchableOpacity>
-              )}
-            />
-          </ScrollView>
+          <View style={styles.habitsContainer}>
+            <Text style={styles.sectionTitle}>
+              {selectedDate === new Date().toDateString() ? "Today" : weekDay} habits
+            </Text>
+
+            {/*Filter buttons*/}
+            <View style={styles.buttonRow}>
+              <TouchableOpacity
+                style={[styles.filterButton, selectedBehavior === "Good" && styles.selectedButton]}
+                onPress={() => setSelectedBehavior("Good")}
+              >
+                <Text style={[styles.buttonText, selectedBehavior === "Good" && styles.selectedButtonText]}>Good</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.filterButton, selectedBehavior === "Bad" && styles.selectedButton]}
+                onPress={() => setSelectedBehavior("Bad")}
+              >
+                <Text style={[styles.buttonText, selectedBehavior === "Bad" && styles.selectedButtonText]}>Bad</Text>
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.habitsList}>
+              <FlatList
+                data={filteredHabits}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setEditId(item.id)
+                      navigation.navigate("Edit")
+                    }}
+                  >
+                    <HabitItem habit={item} selectedDate={selectedDate} />
+                  </TouchableOpacity>
+                )}
+              />
+            </ScrollView>
+          </View>
         </View>
-      </View>
+        </ScrollView>
     </SafeAreaView>
   )
 }
@@ -447,7 +448,7 @@ const createStyles = (theme: any) =>
       backgroundColor: theme.background.overlay,
     },
     header: {
-      
+
       flexDirection: "row",
       alignItems: "flex-start",
     },
