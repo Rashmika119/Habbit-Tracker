@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 100,
+        marginBottom:20,
         backgroundColor: 'white',
         borderRadius: 20,
         padding: 24,
@@ -89,6 +90,7 @@ const styles = StyleSheet.create({
     inputFields: {
         width: '100%',
         alignItems: 'center',
+        
     },
     textInput: {
         height: 50,
@@ -105,7 +107,7 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         width: '100%',
-        marginTop: 20,
+        marginTop: 40,
         marginBottom: 10,
         alignItems: 'center',
     },

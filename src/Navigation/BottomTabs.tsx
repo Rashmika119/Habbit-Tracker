@@ -21,13 +21,13 @@ export default function BottomTabs() {
     const styles = createStyles(theme);
 
     return (
-        
 
-        <Tab.Navigator 
-            screenOptions={{ 
-                headerShown: false, 
-                tabBarShowLabel: false, 
-                tabBarStyle: styles.tabBar 
+
+        <Tab.Navigator
+            screenOptions={{
+                headerShown: false,
+                tabBarShowLabel: false,
+                tabBarStyle: styles.tabBar
             }}
         >
             <Tab.Screen name="Home" component={HomeScreen} options={{

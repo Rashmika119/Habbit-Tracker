@@ -1,14 +1,22 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import LottieView from 'lottie-react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { useAuthStore } from '../Store/useAuthStore';
 
 export default function OpeningScreen({ navigation }: any) {
-    React.useEffect(() => {
-        const timer = setTimeout(() => {
-            navigation.navigate('BottomTabs');
-        }, 3000);
-        return () => clearTimeout(timer);
-    }, []);
+      const isLoggedIn = useAuthStore((state: any) => state.isLoggedIn);
+    
+
+    useFocusEffect(
+        useCallback(() => {
+            const timer = setTimeout(() => {
+                navigation.navigate('Login');
+            }, 3000);
+            return () => clearTimeout(timer);
+        }, [])
+
+    );
 
     return (
         <View style={styles.container}>

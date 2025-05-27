@@ -13,10 +13,10 @@ import OpeningScreen from "../Screens/OpeningScreen.screen";
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigation() {
-  const [loading, setLoading] = useState(true);
+  
 
   const setCurrentUser = useAuthStore((state: any) => state.setCurrentUser);
-  const setIsLoggedIn = useAuthStore((state: any) => state.setIsLoggedIn); 
+  const setIsLoggedIn = useAuthStore((state: any) => state.setIsLoggedIn);
   const isLoggedIn = useAuthStore((state: any) => state.isLoggedIn);
 
 
@@ -28,16 +28,14 @@ export default function AppNavigation() {
         setCurrentUser(user);
         setIsLoggedIn(true);
       }
-      setLoading(false);
+    
     };
     checkUser();
   }, [isLoggedIn]);
 
-  if (loading) return null;
-
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="loading" component={OpeningScreen} />
+    
       {isLoggedIn ? (
         <>
           <Stack.Screen name="BottomTabs" component={BottomTabs} />
@@ -46,6 +44,7 @@ export default function AppNavigation() {
         </>
       ) : (
         <>
+          <Stack.Screen name="loading" component={OpeningScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Register" component={RegisterScreen} />
         </>
