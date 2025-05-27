@@ -4,6 +4,8 @@ import { useThemeStore } from "../Store/themeStore"
 
 import CheckBox from "@react-native-community/checkbox"
 import { getTheme } from "../Themes/colors"
+import HabitCompletedModel from "./HabitCompletedModel"
+import { useState } from "react"
 
 type HabitType = {
   id: number
@@ -64,6 +66,12 @@ const HabitItem = ({ habit, selectedDate }: { habit: HabitType; selectedDate?: s
     }
   }
 
+
+  const handleHabitToggle = () => {
+    // Update the habit
+    handleDone(habit.id, currentDate)
+  }
+
   return (
     <View style={styles.container}>
       <View style={[
@@ -76,7 +84,7 @@ const HabitItem = ({ habit, selectedDate }: { habit: HabitType; selectedDate?: s
         <View style={styles.leftContent}>
           <CheckBox
             value={isCompleted}
-            onValueChange={() => handleDone(habit.id, currentDate)}
+            onValueChange={handleHabitToggle}
             tintColors={{
               true: habit.behavior === "Good" ? "#10B981" : "#EF4444",
               false: theme.border.secondary
@@ -123,6 +131,7 @@ const HabitItem = ({ habit, selectedDate }: { habit: HabitType; selectedDate?: s
           />
         </TouchableOpacity>
       </View>
+
     </View>
   )
 }
@@ -188,13 +197,13 @@ const createStyles = (theme: any) => StyleSheet.create({
   },
   // Clean text badge
   behaviorBadge: {
-    paddingHorizontal: 6, 
-    paddingVertical: 1, 
-    borderRadius: 10, 
-    marginLeft: 6, 
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 10,
+    marginLeft: 6,
   },
   badgeText: {
-    fontSize: 9, 
+    fontSize: 9,
     fontWeight: "600",
     textTransform: "uppercase",
   },

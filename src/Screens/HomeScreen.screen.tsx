@@ -18,11 +18,13 @@ import {
 } from "react-native"
 import { useEditStore, useHabitStore, useHabitTextStore } from "../Store/habitStore"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import HabitItem from "../Components/HabitItem"
+
 import { useAuthStore } from "../Store/useAuthStore"
 import Calendar from "../Components/Calender"
 import { useTheme } from "../hooks/useTheme"
 import { useUserStore, useUserTextStore } from "../Store/userStore"
+import HabitItem from "../Components/HabitItem"
+import HabitCompletedModel from "../Components/HabitCompletedModel"
 
 const { width: screenWidth } = Dimensions.get("window")
 
@@ -31,6 +33,12 @@ function HomeScreen({ navigation }: any) {
   const [selectedDate, setSelectedDate] = useState(new Date().toDateString())
   const [sidebarVisible, setSidebarVisible] = useState(false)
   const [slideAnim] = useState(new Animated.Value(-screenWidth * 0.8))
+
+  // Progress completion modal states
+  const [showProgressModal, setShowProgressModal] = useState(false)
+  const [progressModalType, setProgressModalType] = useState<'Good' | 'Bad'>('Good')
+  const [previousGoodProgress, setPreviousGoodProgress] = useState(0)
+  const [previousBadProgress, setPreviousBadProgress] = useState(0)
 
   // Use theme hook
   const { theme, isDarkMode, toggleTheme, loadTheme } = useTheme()
@@ -188,6 +196,40 @@ function HomeScreen({ navigation }: any) {
   const totalTodayBadHabits = todayBadHabits.length
   const badHabitProgress = totalTodayBadHabits === 0 ? 0 : (completedBadHabits / totalTodayBadHabits) * 100
 
+  // Check for progress completion and show modal (only for today, not historical dates)
+  useEffect(() => {
+    const isToday = selectedDate === new Date().toDateString()
+    
+    if (isToday && loaded) {
+      // Check Good Habits Progress
+      if (
+        totalTodayGoodHabits > 0 && 
+        goodHabitProgress === 100 && 
+        previousGoodProgress < 100 && 
+        previousGoodProgress >= 0 
+      ) {
+        setProgressModalType('Good')
+        setShowProgressModal(true)
+        
+      }
+      
+      // Check Bad Habits Progress
+      if (
+        totalTodayBadHabits > 0 && 
+        badHabitProgress === 100 && 
+        previousBadProgress < 100 && 
+        previousBadProgress >= 0 
+      ) {
+        setProgressModalType('Bad')
+        setShowProgressModal(true)
+      }
+      
+      // Update previous progress for next comparison
+      setPreviousGoodProgress(goodHabitProgress)
+      setPreviousBadProgress(badHabitProgress)
+    }
+  }, [goodHabitProgress, badHabitProgress, selectedDate, loaded, totalTodayGoodHabits, totalTodayBadHabits])
+
   const { setEditId } = useEditStore()
 
   //sort habits
@@ -223,8 +265,25 @@ function HomeScreen({ navigation }: any) {
   // Create dynamic styles
   const styles = createStyles(theme)
 
+  const getProgressModalMessage = () => {
+    if (progressModalType === 'Good') {
+      return 'All Good Habits Completed!'
+    } else {
+      return 'Missed it!. Try it Next Time!'
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container}>
+      {/* Progress Completion Modal */}
+      <HabitCompletedModel
+        visible={showProgressModal}
+        onClose={() => setShowProgressModal(false)}
+        habitType={progressModalType}
+        habitName={getProgressModalMessage()}
+        isCompleting={true}
+      />
+
       {/* Sidebar Modal */}
       <Modal visible={sidebarVisible} transparent={true} animationType="none" onRequestClose={closeSidebar}>
         <View style={styles.modalOverlay}>
