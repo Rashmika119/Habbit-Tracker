@@ -1,102 +1,130 @@
+# 🌱 HabiLoop – Build Good Habits, Break Bad Ones!
 
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+**HabiLoop** is a beautifully designed and practical mobile app built with *React Native*, focused on helping users build positive habits,stay away from negetive habits and stay consistent with daily and weekly routines. It’s fast, simple, and works offline — no Firebase, just local storage.
 
-# Getting Started
+---
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## 🚀 Features
 
-## Step 1: Start Metro
+### ✅ Core Features
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+- **User Authentication**
+  - Register, Login, and Logout functionality
+  - Simple local session management with AsyncStorage
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+- **Habit Management**
+  - Add new habits with:
+    - Habit name
+    - Description
+    - Habit ID (auto-generated)
+    - Habit behavior (Good / Bad)
+    - Repeat type: Daily or Weekly  
+    - Select days for weekly habits  
+    - Time of day: Morning, Afternoon, Evening, Night
+  - Edit existing habits
+  - Delete habits anytime
+  - Mark habits as done manually
 
-```sh
-# Using npm
-npm start
+- **Habit Tracking**
+  - Filter habits by daily or weekly
+  - Sort habit list by time of day (morning to night)
+  - Track completion per habit
+  - View upcoming and completed habits by day/week
 
-# OR using Yarn
-yarn start
-```
+- **Progress Overview**
+  - View daily and weekly progress
+  - See how much you’ve completed each day
+  - Color-coded progress indicators for completion percentage
 
-## Step 2: Build and run your app
+- **Calendar View**
+  - Visualize habit streaks
+  - Identify completion levels with color coding
+  - Navigate through a 7-day view of past and upcoming habits
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+---
 
-### Android
+### 🌟 Bonus Features
 
-```sh
-# Using npm
-npm run android
+- **Animations**
+  - Smooth animations for:
+    - Adding habits
+    - Completing habits
+    - Transitions between views
 
-# OR using Yarn
-yarn android
-```
+- **Dark & Light Mode**
+  - Theme toggling based on user preference
 
-### iOS
+- **User Profile**
+  - View profile details
+  - Theme and session preferences stored locally
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+---
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+## 🛠 Tech Stack
 
-```sh
-bundle install
-```
+| Tool             | Purpose                          |
+|------------------|----------------------------------|
+| React Native     | Mobile app development           |
+| TypeScript       | Static type checking             |
+| AsyncStorage     | Local data storage               |
+| Zustand          | State management                 |
+| React Navigation | Navigation (stack + tabs)        |
+| Custom Hooks     | Business logic separation        |
 
-Then, and every time you update your native dependencies, run:
+---
 
-```sh
-bundle exec pod install
-```
+## 📂 Project Structure
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+```bash
+/habiLoop
+├── /assets              # Icons, animations, images
+├── /components          # Reusable UI elements (e.g., HabitCard, ProgressBar)
+├── /screens             # App screens (Login, Home, Profile, etc.)
+├── /hooks               # Custom hooks (e.g., useHabits, useAuth)
+├── /store               # Zustand stores for state
+├── /navigation          # Stack & tab navigators
+├── /styles              # Theme and style  
+├── /types               # TypeScript types (e.g., HabitType)
+├── /Themes
+└── App.tsx              # Entry point of the app
 
-```sh
-# Using npm
-npm run ios
 
-# OR using Yarn
-yarn ios
-```
+-**📲 Installation & Setup**
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+📦 Prerequisites
+Node.js & npm/yarn
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+Android Studio (for Android)
 
-## Step 3: Modify your app
+Xcode (for iOS on macOS)
 
-Now that you have successfully run the app, let's make changes!
+React Native CLI
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+ Setup Instructions
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+bash
+Copy code
+# 1. Clone the repo
+git clone https://github.com/your-username/habiLoop.git
+cd habiLoop
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+# 2. Install dependencies
+npm install
 
-## Congratulations! :tada:
+# 3. iOS only - install pods
+cd ios
+pod install
+cd ..
 
-You've successfully run and modified your React Native App. :partying_face:
+# 4. Run the app
+npx react-native run-android   # For Android
+npx react-native run-ios       # For iOS (macOS only)
 
-### Now what?
+-**💡 Feel free to contribute or fork this project to customize your own version of HabiLoop!**
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+vbnet
+Copy code
 
-# Troubleshooting
+Let me know if you'd like help with badges, screenshots, a license section, or cont
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
-=======
-# Habbit-Tracker
-a react native habbit tracker app to stay track with daily and weekly tasks
-
+Demo video:
